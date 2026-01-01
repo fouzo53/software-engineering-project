@@ -46,7 +46,7 @@ Dựa trên nhân sự và tiến độ hiện tại, đây là các task bạn 
 | :--- | :--- | :--- | :--- |
 | **DOC-01** | **Update Functional Req List** | **Quốc Huy** | Thay thế bảng FE cũ bằng bảng FE-01 đến FE-14 (như mẫu trên) vào file báo cáo. |
 | **DOC-02** | **Write Use Case Descriptions** | **Lưu Phúc** | Viết mô tả ngắn cho các Use Case chính (Login, Voice Order, Payment, Report). Điền vào mục 2.2.2 đang trống. |
-| **DOC-03** | **Design Database Schema (ERD)** | **Nguyễn Thuận** | *Quan trọng:* Vẽ sơ đồ ERD (các bảng Users, Products, Orders, Debt, Ledger). Xuất file ảnh để đưa vào Chapter 4. |
+| **DOC-03** | **Design Database Schema (ERD)** | **Lưu Phúc** | *Quan trọng:* Vẽ sơ đồ ERD (các bảng Users, Products, Orders, Debt, Ledger). Xuất file ảnh để đưa vào Chapter 4. |
 | **DOC-04** | **Define Database Specs** | **Phúc Cảnh** | Kẻ bảng mô tả chi tiết các cột trong Database (Tên cột, kiểu dữ liệu, khóa chính/phụ) dựa trên ERD của Thuận. |
 
 ### 🎨 Nhóm UI/UX & Mobile

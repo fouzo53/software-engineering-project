@@ -1,4 +1,3 @@
-
 # 📅 Kế hoạch Sprint 1: Planning & Documentation (1 Tuần)
 
 **Mục tiêu:** Hoàn thiện tài liệu **Capstone Project Document** (Chapter I, II, III, IV sơ bộ) và thiết lập quản lý dự án trên Jira.
@@ -67,8 +66,8 @@ Nhóm cần tạo 1 file Google Docs (hoặc Word) chung, chia các mục lục 
 Leader vào Jira tạo Project, sau đó tạo **Sprint 1**. Dưới đây là danh sách các Ticket (Issue) cần tạo:
 
 ### 📌 Epic: Project Initiation & Management
-- [ ] **[TASK] Setup Collaboration Tools:** Tạo GitHub Repo, Discord Channel, Google Drive Folder. (Assign: Leader)
-- [ ] **[TASK] Write Chapter I - Introduction:** Viết tổng quan, bối cảnh, phạm vi dự án. (Assign: Leader)
+- [x] **[TASK] Setup Collaboration Tools:** Tạo GitHub Repo, Discord Channel, Google Drive Folder. (Assign: Leader)
+- [x] **[TASK] Write Chapter I - Introduction:** Viết tổng quan, bối cảnh, phạm vi dự án. (Assign: Leader)
 - [ ] **[TASK] Write Chapter II - Management Plan:** Lên lịch trình 8 tuần, danh sách công cụ. (Assign: Leader)
 
 ### 📌 Epic: Requirements & Analysis
@@ -87,32 +86,6 @@ Leader vào Jira tạo Project, sau đó tạo **Sprint 1**. Dưới đây là d
 - [ ] **[TASK] Design Mobile Wireframes:** Vẽ nháp màn hình điện thoại (Login, Voice Record, Bill Confirm). (Assign: UI Team 1)
 - [ ] **[TASK] Design Web Wireframes:** Vẽ nháp màn hình Admin Web (Dashboard, Product List, Report). (Assign: UI Team 2)
 - [ ] **[TASK] Create Mockups:** (Nếu kịp) Chuyển bản vẽ tay sang Figma cơ bản. (Assign: UI Team)
-
----
-
-## 4. Lịch trình làm việc tuần này (Sample Schedule)
-
-*   **Thứ 2:**
-    *   Họp Kick-off (Toàn team).
-    *   Leader phân chia công việc trên Jira.
-    *   Thống nhất giờ họp Daily (ví dụ 20h tối).
-*   **Thứ 3:**
-    *   BA nghiên cứu nghiệp vụ.
-    *   Sys Arch phác thảo Database.
-    *   UI Team vẽ nháp ra giấy.
-*   **Thứ 4:**
-    *   Họp nhóm Review Database (Cực quan trọng: Cả team phải đồng ý với Database này).
-    *   Chốt Use Case Diagram.
-*   **Thứ 5:**
-    *   Viết nội dung vào file báo cáo chung.
-    *   UI Team chốt Flow màn hình.
-*   **Thứ 6:**
-    *   Review chéo tài liệu.
-    *   Chỉnh sửa văn phong tiếng Anh (nếu nộp bằng tiếng Anh).
-*   **Thứ 7:**
-    *   Tổng hợp file PDF hoàn chỉnh (Version 1.0).
-    *   Nộp bài tập/Gửi giảng viên.
-    *   Lên kế hoạch Sprint 2 (Bắt đầu code).
 
 ---
 

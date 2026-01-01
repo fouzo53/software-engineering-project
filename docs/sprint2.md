@@ -13,7 +13,6 @@ status: Planning
 **Mục tiêu chính:**
 1.  Thiết lập môi trường phát triển chuẩn **Docker** (Backend + Database).
 2.  Xây dựng khung Backend theo **Clean Architecture**.
-3.  Hoàn thiện tính năng **Đăng nhập (Login)** End-to-End (Mobile/Web <-> API <-> Database).
 
 ---
 
