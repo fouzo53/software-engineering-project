@@ -32,21 +32,21 @@ Household businesses in Vietnam often operate manually, leading to calculation e
 ## 🚀 Key Features
 
 ### 🛒 For Employee (Mobile App)
-- [ ] **Quick POS:** Search products, add to cart, and print receipts via Bluetooth.
-- [ ] **Voice Order (AI):** Record voice commands to generate draft orders automatically.
-- [ ] **Debt Recording:** Record credit sales for registered customers.
-- [ ] **Real-time Notifications:** Receive alerts when AI finishes processing an order.
+**Quick POS:** Search products, add to cart, and print receipts.
+**Voice Order (AI):** Record voice commands to generate draft orders automatically.
+**Debt Recording:** Record credit sales for registered customers.
+**Real-time Notifications:** Receive alerts when AI finishes processing an order.
 
 ### 🏢 For Owner (Web Dashboard)
-- [ ] **Inventory Management:** Track stock levels, import goods.
-- [ ] **Financial Reporting:** Auto-generated Revenue & Debt reports (Circular 88/2021/TT-BTC).
-- [ ] **Customer Management:** View purchase history and outstanding debts.
-- [ ] **Employee Management:** Create accounts and assign roles.
+**Inventory Management:** Track stock levels, import goods.
+**Financial Reporting:** Auto-generated Revenue & Debt reports (Circular 88/2021/TT-BTC).
+**Customer Management:** View purchase history and outstanding debts.
+**Employee Management:** Create accounts and assign roles.
 
 ### 🤖 System & AI
-- [ ] **Speech-to-Text:** Converts Vietnamese voice to text (Whisper).
-- [ ] **RAG (Retrieval-Augmented Generation):** Maps natural language to exact product SKUs in the database.
-- [ ] **Auto-Hiding:** Automated ledger entry for every transaction.
+**Speech-to-Text:** Converts Vietnamese voice to text (Whisper).
+**RAG (Retrieval-Augmented Generation):** Maps natural language to exact product SKUs in the database.
+**Auto-Hiding:** Automated ledger entry for every transaction.
 
 ---
 
@@ -146,8 +146,8 @@ We strictly follow **Git Flow** for collaboration.
 
 | Student ID | Name | Role |
 | :--- | :--- | :--- |
-| **SExxxxxx** | **Nguyen Van A** | Leader / PM / Backend |
-| **SExxxxxx** | **Tran Van B** | Business Analyst / Tester |
+| **087205004266** | **Huỳnh Xuân Huy** | Leader / PM |
+| **** | **Tran Van B** | Business Analyst / Tester |
 | **SExxxxxx** | **Le Van C** | Mobile Developer |
 | **SExxxxxx** | **Pham Van D** | Web Developer |
 | **SExxxxxx** | **Hoang Van E** | AI Engineer |
@@ -157,5 +157,3 @@ We strictly follow **Git Flow** for collaboration.
 ---
 
 ```
-
-
