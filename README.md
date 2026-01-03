@@ -2,7 +2,7 @@
 
 ![Project Status](https://img.shields.io/badge/Status-Development-yellow)
 ![License](https://img.shields.io/badge/License-MIT-blue)
-![Team](https://img.shields.io/badge/Team-4Bees-orange)
+![Team](https://img.shields.io/badge/Team-7Members-orange)
 
 **BizFlow** is a comprehensive solution designed to modernize traditional household businesses in Vietnam. It combines a Point-of-Sale (POS) system with an AI-powered assistant to automate ordering via voice/text and streamline bookkeeping in compliance with **Circular 88/2021/TT-BTC**.
 
