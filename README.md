@@ -23,7 +23,7 @@
 Household businesses in Vietnam often operate manually, leading to calculation errors, inventory losses, and difficulty in tracking customer debts. Existing POS solutions are often too complex, expensive, or not tailored to the specific needs of hardware/construction material stores (Group 1 & 2 under Ministry of Finance).
 
 **BizFlow Solution:**
-- **Voice-to-Order:** AI assistant listens to natural language (e.g., *"Get 5 bags of cement for Mr. Ba, put it on his tab"*) and creates draft orders.
+- **Voice-to-Order:** AI assistant listens to natural language and creates draft orders.
 - **Auto-Bookkeeping:** Automatically generates financial reports required by Vietnamese law (Circular 88).
 - **Hybrid Platform:** Works on Mobile (for employees on the move) and Web (for owners managing back-office).
 
@@ -32,21 +32,21 @@ Household businesses in Vietnam often operate manually, leading to calculation e
 ## 🚀 Key Features
 
 ### 🛒 For Employee (Mobile App)
-**Quick POS:** Search products, add to cart, and print receipts.
-**Voice Order (AI):** Record voice commands to generate draft orders automatically.
-**Debt Recording:** Record credit sales for registered customers.
-**Real-time Notifications:** Receive alerts when AI finishes processing an order.
+- **Quick POS:** Search products, add to cart, and print receipts.
+- **Voice Order (AI):** Record voice commands to generate draft orders automatically.
+- **Debt Recording:** Record credit sales for registered customers.
+- **Real-time Notifications:** Receive alerts when AI finishes processing an order.
 
 ### 🏢 For Owner (Web Dashboard)
-**Inventory Management:** Track stock levels, import goods.
-**Financial Reporting:** Auto-generated Revenue & Debt reports (Circular 88/2021/TT-BTC).
-**Customer Management:** View purchase history and outstanding debts.
-**Employee Management:** Create accounts and assign roles.
+- **Inventory Management:** Track stock levels, import goods.
+- **Financial Reporting:** Auto-generated Revenue & Debt reports (Circular 88/2021/TT-BTC).
+- **Customer Management:** View purchase history and outstanding debts.
+- **Employee Management:** Create accounts and assign roles.
 
 ### 🤖 System & AI
-**Speech-to-Text:** Converts Vietnamese voice to text (Whisper).
-**RAG (Retrieval-Augmented Generation):** Maps natural language to exact product SKUs in the database.
-**Auto-Hiding:** Automated ledger entry for every transaction.
+- **Speech-to-Text:** Converts Vietnamese voice to text (Whisper).
+- **RAG (Retrieval-Augmented Generation):** Maps natural language to exact product SKUs in the database.
+- **Auto-Bookkeeping:** Automated ledger entry for every transaction.
 
 ---
 
@@ -146,14 +146,9 @@ We strictly follow **Git Flow** for collaboration.
 
 | Student ID | Name | Role |
 | :--- | :--- | :--- |
-| **087205004266** | **Huỳnh Xuân Huy** | Leader / PM |
-| **** | **Tran Van B** | Business Analyst / Tester |
-| **SExxxxxx** | **Le Van C** | Mobile Developer |
-| **SExxxxxx** | **Pham Van D** | Web Developer |
-| **SExxxxxx** | **Hoang Van E** | AI Engineer |
-| **SExxxxxx** | **Do Van F** | Backend Developer |
-| **SExxxxxx** | **Ngo Van G** | Mobile Developer |
-
----
-
-```
+| **087205004266** | **Huỳnh Xuân Huy** | Leader / Project Manager / AI Engineer |
+| **0582066001036** | **Lê Ngọc Châu** | Business Analyst / Tester / Web Developer
+| **068206002643** | **Njan Bruy** | Backend Developer |
+| **086206000986** | **Lê Hà Quốc Huy** | Backend Developer |
+| **0862001763** | **Lưu Võ Thiên Phúc** | Backend Developer / Mobile Developer |
+| **079206042023** | **Nguyễn Phúc Cảnh** | Backend Developer / Mobile Developer |
