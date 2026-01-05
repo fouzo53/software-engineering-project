@@ -19,6 +19,9 @@
         <mxCell id="wwyC6NtSpFlwY2LdokFN-24" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-23">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="wwyC6NtSpFlwY2LdokFN-64" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Employee Dashboard&lt;br&gt;&lt;div&gt;[màn hình tổng quan]&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="140" x="530" y="140" as="geometry" />
         </mxCell>
@@ -85,11 +88,6 @@
         </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-31" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-30">
           <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="wwyC6NtSpFlwY2LdokFN-55" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-7">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="600" y="208.33333333333334" as="targetPoint" />
-          </mxGeometry>
         </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="View Cart&lt;div&gt;[xem &amp;amp; chỉnh sửa gió hàng]&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="140" x="530" y="800" as="geometry" />
@@ -170,6 +168,11 @@
         </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-63" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="wwyC6NtSpFlwY2LdokFN-1">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wwyC6NtSpFlwY2LdokFN-65" connectable="0" parent="wwyC6NtSpFlwY2LdokFN-63" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Không" vertex="1">
+          <mxGeometry relative="1" x="-0.1111" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-57" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Xác thực quyền Employee" vertex="1">
           <mxGeometry height="110" width="110" x="545" y="-20" as="geometry" />
