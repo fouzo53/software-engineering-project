@@ -71,4 +71,44 @@ Luồng Manager/Owner giống như **chủ một gian hàng** trong khu chợ:
 - Biết ai đang nợ tiền và lịch sử mua (Khách hàng & Công nợ).  
 - Cuối kỳ có sẵn **sổ cái kỹ thuật số** để nộp cho cơ quan thuế mà không cần thuê kế toán chuyên nghiệp.[1]
 
+***
+
+## Wireframe Mermaid – Manager/Owner Screen Flow
+
+```mermaid
+flowchart TD
+    %% Đăng nhập
+    A[Login Page<br/>Màn hình Đăng nhập] --> B{Xác thực vai trò Owner?}
+    B -->|Không| A
+    B -->|Có| C[Owner Dashboard<br/>Màn hình Tổng quan]
+
+    %% Dashboard & điều hướng chính
+    C --> C1[View KPIs<br/>Doanh thu ngày/tháng<br/>Ước tính lợi nhuận<br/>Cảnh báo hàng sắp hết]
+    C --> D[Product & Inventory<br/>Quản lý Sản phẩm & Kho]
+    C --> E[Customer & Debt<br/>Khách hàng & Công nợ]
+    C --> F[Compliance Reports<br/>Báo cáo tuân thủ TT88]
+
+    %% Product & Inventory
+    D --> D1[Product List<br/>Danh sách sản phẩm, đơn vị tính, giá bán]
+    D1 --> D2[Add/Update Product<br/>Thêm/Chỉnh sửa hàng hóa]
+    D1 --> D3[Stock Entry<br/>Nhập kho, cập nhật tồn kho]
+    D2 --> D1
+    D3 --> D1
+    D1 --> C
+
+    %% Customer & Debt
+    E --> E1[Customer List<br/>Danh sách khách & tổng nợ]
+    E1 --> E2[Debt History<br/>Chi tiết từng đơn nợ]
+    E2 --> E3[Record Payment / New Debt<br/>Ghi nhận thanh toán / ghi nợ]
+    E3 --> E1
+    E1 --> C
+
+    %% Compliance / Tax Report (Thông tư 88)
+    F --> F1[Report Selection<br/>Chọn loại sổ: doanh thu / nợ]
+    F1 --> F2[Export PDF/Excel<br/>Mẫu chuẩn Thông tư 88/2021/TT-BTC]
+    F2 --> C
+```
+
+Nếu bạn muốn, có thể bổ sung thêm nhánh **quản lý nhân viên (Employee Management)** vào khu vực Owner Dashboard để sát hơn với nghiệp vụ tạo/quản lý tài khoản nhân viên bán hàng.[1]
+
 [1](https://mermaid.ai/open-source/syntax/examples.html)
