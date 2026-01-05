@@ -1,38 +1,14 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.9">
   <diagram name="Page-1" id="B-4W4nGpLVfAzOMjk-Na">
-    <mxGraphModel dx="1016" dy="520" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="720" dy="1468" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="wwyC6NtSpFlwY2LdokFN-8" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-6">
+        <mxCell id="wwyC6NtSpFlwY2LdokFN-59" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-57">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Login Page&lt;div&gt;[màn hình đăng nhập]&lt;/div&gt;" vertex="1">
-          <mxGeometry height="40" width="140" x="290" y="50" as="geometry" />
-        </mxCell>
-        <mxCell id="wwyC6NtSpFlwY2LdokFN-2" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="wwyC6NtSpFlwY2LdokFN-1">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="600" y="10" />
-              <mxPoint x="360" y="10" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wwyC6NtSpFlwY2LdokFN-3" connectable="0" parent="wwyC6NtSpFlwY2LdokFN-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Không" vertex="1">
-          <mxGeometry relative="1" x="-0.0018" y="1" as="geometry">
-            <mxPoint x="-2" y="-2" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wwyC6NtSpFlwY2LdokFN-4" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-7">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="wwyC6NtSpFlwY2LdokFN-5" connectable="0" parent="wwyC6NtSpFlwY2LdokFN-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Có" vertex="1">
-          <mxGeometry relative="1" x="-0.1667" y="1" as="geometry">
-            <mxPoint x="-2" y="4" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wwyC6NtSpFlwY2LdokFN-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Xác thực quyền Employee" vertex="1">
-          <mxGeometry height="40" width="140" x="530" y="50" as="geometry" />
+          <mxGeometry height="40" width="140" x="290" y="15" as="geometry" />
         </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-10" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-9">
           <mxGeometry relative="1" as="geometry" />
@@ -43,7 +19,7 @@
         <mxCell id="wwyC6NtSpFlwY2LdokFN-24" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-23">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="wwyC6NtSpFlwY2LdokFN-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Owner Dashboard&lt;div&gt;[màn hình tổng quan]&lt;/div&gt;" vertex="1">
+        <mxCell id="wwyC6NtSpFlwY2LdokFN-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Employee Dashboard&lt;br&gt;&lt;div&gt;[màn hình tổng quan]&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="140" x="530" y="140" as="geometry" />
         </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-14" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-11">
@@ -183,6 +159,20 @@
         </mxCell>
         <mxCell id="wwyC6NtSpFlwY2LdokFN-47" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Send to Printer&lt;div&gt;[sử dụng Bluetooh/LAN]&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="140" x="760" y="1700" as="geometry" />
+        </mxCell>
+        <mxCell id="wwyC6NtSpFlwY2LdokFN-60" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="wwyC6NtSpFlwY2LdokFN-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wwyC6NtSpFlwY2LdokFN-61" connectable="0" parent="wwyC6NtSpFlwY2LdokFN-60" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Có" vertex="1">
+          <mxGeometry relative="1" x="-0.1867" y="-2" as="geometry">
+            <mxPoint x="2" y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wwyC6NtSpFlwY2LdokFN-63" edge="1" parent="1" source="wwyC6NtSpFlwY2LdokFN-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="wwyC6NtSpFlwY2LdokFN-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wwyC6NtSpFlwY2LdokFN-57" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Xác thực quyền Employee" vertex="1">
+          <mxGeometry height="110" width="110" x="545" y="-20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
