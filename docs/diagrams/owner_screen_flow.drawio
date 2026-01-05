@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.9">
   <diagram name="Page-1" id="uOZjqqtw7-3c_kp_wQO6">
-    <mxGraphModel dx="1541" dy="354" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1344" dy="253" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -183,23 +183,22 @@
         <mxCell id="2ssPhYqUT-E6GOqDvnjE-63" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Employee List&lt;div&gt;[danh sách nhân viên]&lt;/div&gt;" vertex="1">
           <mxGeometry height="40" width="140" x="890" y="370" as="geometry" />
         </mxCell>
-        <mxCell id="2ssPhYqUT-E6GOqDvnjE-68" edge="1" parent="1" source="2ssPhYqUT-E6GOqDvnjE-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="2ssPhYqUT-E6GOqDvnjE-63">
+        <mxCell id="2ssPhYqUT-E6GOqDvnjE-68" edge="1" parent="1" source="2ssPhYqUT-E6GOqDvnjE-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="2ssPhYqUT-E6GOqDvnjE-63">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1060" y="520" />
-              <mxPoint x="1060" y="390" />
+              <mxPoint x="1060" y="400" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="2ssPhYqUT-E6GOqDvnjE-66" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Add Employee&amp;nbsp;&lt;div&gt;[tạo tài khoản nhân viên]&lt;/div&gt;" vertex="1">
           <mxGeometry height="40" width="140" x="890" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="2ssPhYqUT-E6GOqDvnjE-71" edge="1" parent="1" source="2ssPhYqUT-E6GOqDvnjE-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="2ssPhYqUT-E6GOqDvnjE-63">
+        <mxCell id="2ssPhYqUT-E6GOqDvnjE-71" edge="1" parent="1" source="2ssPhYqUT-E6GOqDvnjE-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="2ssPhYqUT-E6GOqDvnjE-63">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1300" y="530" />
-              <mxPoint x="1300" y="350" />
-              <mxPoint x="995" y="350" />
+              <mxPoint x="1300" y="380" />
             </Array>
           </mxGeometry>
         </mxCell>
