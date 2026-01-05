@@ -1,0 +1,47 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.9">
+  <diagram name="Page-1" id="ADD6fHM_6qqDDUkC4ffh">
+    <mxGraphModel dx="494" dy="253" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Login Page" vertex="1">
+          <mxGeometry height="40" width="80" x="240" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-31" edge="1" parent="1" source="x2BTohuIrV3pBwU8bzpI-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="x2BTohuIrV3pBwU8bzpI-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-36" edge="1" parent="1" source="x2BTohuIrV3pBwU8bzpI-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="x2BTohuIrV3pBwU8bzpI-27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-22" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Admin Dashboard" vertex="1">
+          <mxGeometry height="40" width="80" x="390" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-23" edge="1" parent="1" source="x2BTohuIrV3pBwU8bzpI-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.03;entryY=0.505;entryDx=0;entryDy=0;entryPerimeter=0;" target="x2BTohuIrV3pBwU8bzpI-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-35" edge="1" parent="1" source="x2BTohuIrV3pBwU8bzpI-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="x2BTohuIrV3pBwU8bzpI-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Owner Account List" vertex="1">
+          <mxGeometry height="40" width="80" x="540" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-38" edge="1" parent="1" source="x2BTohuIrV3pBwU8bzpI-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="x2BTohuIrV3pBwU8bzpI-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-27" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Configuration Screen" vertex="1">
+          <mxGeometry height="40" width="80" x="540" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-34" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Update Status Live" vertex="1">
+          <mxGeometry height="40" width="80" x="690" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="x2BTohuIrV3pBwU8bzpI-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Edit System Configuration" vertex="1">
+          <mxGeometry height="40" width="80" x="690" y="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
