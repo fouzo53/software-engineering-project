@@ -77,8 +77,8 @@ Hệ thống quản lý bán hàng dành cho cửa hàng vật liệu xây dựn
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/fouzo53/software-engineering-project.git
-cd software-engineering-project
+git clone https://github.com/your-username/Flask-CleanArchitecture.git
+cd Flask-CleanArchitecture
 ```
 
 ### 2. Cài đặt Backend
