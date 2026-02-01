@@ -225,14 +225,6 @@ Flask-CleanArchitecture/
 
 Swagger UI: http://localhost:6868/docs
 
-## 📄 License
 
-MIT License
-
-## 👨‍💻 Tác giả
-
-Developed with ❤️ by **Lê Ngọc Châu**
-
----
 
 ⭐ Nếu dự án hữu ích, hãy cho một star nhé!
