@@ -1,12 +1,13 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
-from infrastructure.databases.base import Base
+from dataclasses import dataclass
+from typing import Optional
 
+
+@dataclass
 class User:
-    
-    def __innit__(self, username: str, password: str, description: str = None, status: bool = True):
-        self.username = username
-        self.password = password
-        self.description = description
-        self.status = status
-        self.created_at = None
-        self.updated_at = None
+    username: str
+    password_hash: str
+    role: str
+    full_name: str
+    id: Optional[int] = None
+    status: str = 'active'
+    subscription: str = 'basic'

@@ -1,14 +1,17 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
-from infrastructure.databases.base import Base
+from src.infrastructure.databases.database import db
 
-class UserModel(Base):
-    __tablename__ = 'flask_user'
-    # __table_args__ = {'extend_existing': True}  # Thêm dòng này
 
-    id = Column(Integer, primary_key=True)
-    username = Column(String(18), nullable=False,unique= True)
-    password = Column(String(18), nullable=False)
-    description = Column(String(255), nullable=True)
-    status = Column(Boolean, nullable=False)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime) 
+class UserModel(db.Model):
+    """SQLAlchemy model cho User table"""
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(50), unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), nullable=False, default='user')
+    full_name = db.Column(db.String(100), nullable=True)
+    status = db.Column(db.String(20), nullable=False, default='active')
+    subscription = db.Column(db.String(20), nullable=False, default='basic')
+    
+    def __repr__(self):
+        return f'<UserModel {self.username}>'

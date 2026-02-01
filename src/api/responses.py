@@ -1,15 +1,23 @@
-# src/api/responses.py
-
 from flask import jsonify
 
-def success_response(data, message="Success"):
-    return jsonify({"message": message, "data": data}), 200
 
-def error_response(message="An error occurred", status_code=400):
-    return jsonify({"message": message}), status_code
+def success_response(data=None, message="Success", status_code=200):
+    """Tạo response thành công chuẩn"""
+    response = {
+        "status": "success",
+        "message": message
+    }
+    if data is not None:
+        response["data"] = data
+    
+    return jsonify(response), status_code
 
-def not_found_response(message="Resource not found"):
-    return jsonify({"message": message}), 404
 
-def validation_error_response(errors):
-    return jsonify({"message": "Validation errors", "errors": errors}), 422
+def error_response(message="Error", status_code=400):
+    """Tạo response lỗi chuẩn"""
+    response = {
+        "status": "error",
+        "message": message
+    }
+    
+    return jsonify(response), status_code

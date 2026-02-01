@@ -1,36 +1,72 @@
-# Middleware functions for processing requests and responses
+from functools import wraps
+from flask import request, jsonify
+import jwt
+from src.config import Config
 
-from flask import  request, jsonify
 
-def log_request_info(app):
-    app.logger.debug('Headers: %s', request.headers)
-    app.logger.debug('Body: %s', request.get_data())
+def token_required(f):
+    """Decorator để kiểm tra JWT token"""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        
+        # JWT token in headers
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            try:
+                token = auth_header.split(" ")[1]  # Bearer <token>
+            except IndexError:
+                return jsonify({'error': 'Token format invalid'}), 401
+        
+        if not token:
+            return jsonify({'error': 'Token is missing'}), 401
+        
+        try:
+            # Decode token
+            data = jwt.decode(token, Config.SECRET_KEY, algorithms=["HS256"])
+            current_user = {
+                'user_id': data['user_id'],
+                'username': data['username'],
+                'role': data['role']
+            }
+            request.current_user = current_user
+        except jwt.ExpiredSignatureError:
+            return jsonify({'error': 'Token has expired'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'error': 'Token is invalid'}), 401
+        
+        return f(*args, **kwargs)
+    
+    return decorated
 
-def handle_options_request():
-    return jsonify({'message': 'CORS preflight response'}), 200
 
-def error_handling_middleware(error):
-    response = jsonify({'error': str(error)})
-    response.status_code = 500
-    return response
+def owner_required(f):
+    """Decorator để kiểm tra role owner"""
+    @wraps(f)
+    @token_required
+    def decorated(*args, **kwargs):
+        if not hasattr(request, 'current_user'):
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        if request.current_user['role'] != 'owner':
+            return jsonify({'error': 'Chỉ Owner mới có quyền truy cập'}), 403
+        
+        return f(*args, **kwargs)
+    
+    return decorated
 
-def add_custom_headers(response):
-    response.headers['X-Custom-Header'] = 'Value'
-    return response
 
-def middleware(app):
-    @app.before_request
-    def before_request():
-        log_request_info(app)
-
-    @app.after_request
-    def after_request(response):
-        return add_custom_headers(response)
-
-    @app.errorhandler(Exception)
-    def handle_exception(error):
-        return error_handling_middleware(error)
-
-    @app.route('/options', methods=['OPTIONS'])
-    def options_route():
-        return handle_options_request()
+def admin_required(f):
+    """Decorator để kiểm tra role admin"""
+    @wraps(f)
+    @token_required
+    def decorated(*args, **kwargs):
+        if not hasattr(request, 'current_user'):
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        if request.current_user['role'] != 'admin':
+            return jsonify({'error': 'Chỉ Admin mới có quyền truy cập'}), 403
+        
+        return f(*args, **kwargs)
+    
+    return decorated

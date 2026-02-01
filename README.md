@@ -1,184 +1,238 @@
-# Architecture
+# 🏪 BizFlow - Hệ thống Quản lý Cửa hàng Vật liệu Xây dựng
+
+![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
+![Flask](https://img.shields.io/badge/Flask-3.0-green.svg)
+![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+Hệ thống quản lý bán hàng dành cho cửa hàng vật liệu xây dựng, được xây dựng theo kiến trúc **Clean Architecture** với Flask (Backend) và Next.js (Frontend).
+
+## ✨ Tính năng
+
+### 🔐 Phân quyền 3 cấp
+
+| Role               | Mô tả             | Quyền hạn                                                      |
+| ------------------ | ----------------- | -------------------------------------------------------------- |
+| **Admin Platform** | Quản trị hệ thống | Quản lý tất cả tài khoản, vô hiệu hóa khi không thanh toán phí |
+| **Owner**          | Chủ cửa hàng      | Quản lý nhân viên, sản phẩm, khách hàng, xem báo cáo           |
+| **Employee**       | Nhân viên         | Bán hàng (POS), xem sản phẩm, tạo khách hàng mới               |
+
+### 🛒 Quản lý bán hàng (POS)
+
+- Giao diện bán hàng trực quan, dễ sử dụng
+- Tìm kiếm sản phẩm nhanh
+- Chọn khách hàng hoặc bán lẻ
+- Thanh toán: Tiền mặt / Ghi nợ
+- Quản lý công nợ khách hàng
+
+### 📦 Quản lý sản phẩm
+
+- Thêm/sửa/xóa sản phẩm
+- Phân loại theo danh mục
+- Quản lý giá nhập, giá bán
+- Theo dõi tồn kho
+- Hỗ trợ hình ảnh sản phẩm
+
+### 👥 Quản lý khách hàng
+
+- Thông tin khách hàng
+- Lịch sử mua hàng
+- Quản lý công nợ
+- Ghi nhận thanh toán nợ
+
+### 🤖 Trợ lý AI (Google Gemini)
+
+- Phân tích doanh thu
+- Đề xuất sản phẩm bán chạy
+- Tư vấn kinh doanh
+
+## 🛠️ Công nghệ sử dụng
+
+### Backend
+
+- **Python 3.9+**
+- **Flask 3.0** - Web Framework
+- **SQLAlchemy** - ORM
+- **MySQL** - Database
+- **JWT** - Authentication
+- **Bcrypt** - Password Hashing
+
+### Frontend
+
+- **Next.js 15** - React Framework
+- **TypeScript** - Type Safety
+- **Tailwind CSS** - Styling
+- **Shadcn/UI** - UI Components
+
+## 📋 Yêu cầu hệ thống
+
+- Python 3.9+
+- Node.js 18+
+- MySQL 8.0+
+- Git
+
+## 🚀 Cài đặt và Chạy
+
+### 1. Clone repository
 
 ```bash
-    ├── migrations
-    ├── scripts
-    │   └── run_postgres.sh
-    ├── src
-    │   ├── api
-    │   │   ├── controllers
-    │   │   │   └── ...  # controllers for the api
-    │   │   ├── schemas
-    │   │   │   └── ...  # Marshmallow schemas
-    │   │   ├── middleware.py
-    │   │   ├── responses.py
-    │   │   └── requests.py
-    │   ├── infrastructure
-    │   │   ├── services
-    │   │   │   └── ...  # Services that use third party libraries or services (e.g. email service)
-    │   │   ├── databases
-    │   │   │   └── ...  # Database adapaters and initialization
-    │   │   ├── repositories
-    │   │   │   └── ...  # Repositories for interacting with the databases
-    │   │   └── models
-    │   │   │   └── ...  # Database models
-    │   ├── domain
-    │   │   ├── constants.py
-    │   │   ├── exceptions.py
-    │   │   ├── models
-    │   │   │   └── ...  # Business logic models
-    │   ├── services
-    │   │    └── ...  # Services for interacting with the domain (business logic)
-    │   ├── app.py
-    │   ├── config.py
-    │   ├── cors.py
-    │   ├── create_app.py
-    │   ├── dependency_container.py
-    │   ├── error_handler.py
-    │   └── logging.py
+git clone https://github.com/fouzo53/software-engineering-project.git
+cd software-engineering-project
 ```
 
-## Domain Layer
+### 2. Cài đặt Backend
 
-## Services Layer
+```bash
+# Tạo virtual environment
+python -m venv .venv
 
-## Infrastructure Layer
+# Kích hoạt virtual environment
+# Windows:
+.venv\Scripts\activate
+# Linux/Mac:
+source .venv/bin/activate
 
-## Download source code (CMD)
-    git clone https://github.com/ChienNguyensrdn/Flask-CleanArchitecture.git
-## Kiểm tra đã cài python đã cài đặt trên máy chưa
-    python --version
-## Run app
+# Cài đặt dependencies
+pip install -r src/requirements.txt
+```
 
- - Bước 1: Tạo môi trường ảo co Python (phiên bản 3.x)
-     ## Windows:
-     		py -m venv .venv
-     ## Unix/MacOS:
-     		python3 -m venv .venv
-   - Bước 2: Kích hoạt môi trường:
-     ## Windows:
-     		.venv\Scripts\activate.ps1
-     ### Nếu xảy ra lỗi active .venv trên winos run powershell -->Administrator
-         Set-ExecutionPolicy RemoteSigned -Force
-     ## Unix/MacOS:
-     		source .venv/bin/activate
-     
-   - Bước 3: Cài đặt các thư viện cần thiết
-     ## Install:
-     		pip install -r requirements.txt
-   - Bước 4: Chạy mã xử lý dữ liệu
-     ## Run:
-    		python app.py
+### 3. Tạo Database MySQL
 
+```sql
+CREATE DATABASE bizflow_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-     Truy câp http://localhost:6868/docs
-     Truy câp http://localhost:9999/docs
+### 4. Cấu hình môi trường
 
+Chỉnh sửa file `.env`:
 
+```env
+# Database - thay đổi password phù hợp
+DATABASE_URI=mysql+pymysql://root:your_password@127.0.0.1:3306/bizflow_db
 
-## Create file .env in folder /src/.env
-    
-    # Flask settings
-    FLASK_ENV=development
-    SECRET_KEY=your_secret_key
-    
-    # SQL Server settings
-    DB_USER=sa
-    DB_PASSWORD=Aa@123456
-    DB_HOST=127.0.0.1
-    DB_PORT=1433
-    DB_NAME=FlaskApiDB
-    
-    
-    DATABASE_URI = "mssql+pymssql://sa:Aa%40123456@127.0.0.1:1433/FlaskApiDB"
+# JWT Secret (thay đổi trong production)
+SECRET_KEY=your-secret-key-here
+JWT_SECRET=your-jwt-secret-here
 
-## pull image MS SQL server 
-    
-    ```bash
-    docker pull mcr.microsoft.com/mssql/server:2025-latest
-    ```
-## Install MS SQL server in docker 
-    ```bash
-    docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Aa123456" -p 1433:1433 --name sql1 --hostname sql1 -d  mcr.microsoft.com/mssql/server:2025-latest
-    ```
-## Test connect SQL server 
+# Google AI API (tùy chọn - cho tính năng AI)
+GOOGLE_API_KEY=your-google-api-key
+```
 
-## ORM Flask (from sqlalchemy.orm )
-Object Relational Mapping
+### 5. Nạp dữ liệu mẫu
 
-Ánh xạ 1 class (OOP)  model src/infrastructure/models --> Table in database 
-Ánh xạ các mối quan hệ (Relational) -- Khoá ngoại CSDL 
-(n-n): many to many 
+```bash
+python seed_vietnamese.py
+```
 
-@startuml
-' Diagram Title
-title Clean Architecture Sequence Diagram
+Sau khi chạy, bạn sẽ có:
 
-' Define participants in order of appearance
-actor Actor
-participant "Web App"
-participant "Controller"
-participant "Services"
-participant "Domain"
-participant "infrastructure"
-database "Database"
+- **57 sản phẩm** với 5 danh mục
+- **20 khách hàng** mẫu
+- **30 đơn hàng** lịch sử
+- **2 tài khoản**:
+  - `admin` / `123456` → Chủ cửa hàng (Owner)
+  - `staff` / `123456` → Nhân viên (Employee)
 
-' --- Message Flow ---
+### 6. Chạy Backend
 
-' 1. Initial Request
-Actor -> "Web App": Request
-activate "Web App"
+```bash
+python run.py
+```
 
-' 2. Forwarding to Controller
-"Web App" -> "Controller"
-activate "Controller"
+Server chạy tại: http://localhost:6868
 
-' 3. Calling the Service Layer
-"Controller" -> "Services"
-activate "Services"
+### 7. Cài đặt và chạy Frontend
 
-' 4. Interacting with the Domain Layer
-"Services" -> "Domain"
-activate "Domain"
-note over Domain: Interfaces
+```bash
+cd frontend
 
-' 5. Interacting with Infrastructure
-"Domain" -> "infrastructure"
-activate "infrastructure"
-note over infrastructure: Class implement
+# Cài đặt dependencies
+npm install
 
-' 6. Database Query
-"infrastructure" -> "Database"
-activate "Database"
+# Chạy development server
+npm run dev
+```
 
-' --- Response Flow (Return Messages) ---
+Frontend chạy tại: http://localhost:3000
 
-' 7. Database returns data
-"Database" --> "infrastructure"
-deactivate "Database"
+## 📖 Sử dụng
 
-' 8. Infrastructure returns to Domain
-"infrastructure" --> "Domain"
-deactivate "infrastructure"
+### Đăng nhập
 
-' 9. Domain returns to Services
-"Domain" --> "Services"
-deactivate "Domain"
+Truy cập http://localhost:3000/login
 
-' 10. Services returns to Controller
-"Services" --> "Controller"
-deactivate "Services"
+| Vai trò      | Username | Password |
+| ------------ | -------- | -------- |
+| Chủ cửa hàng | `admin`  | `123456` |
+| Nhân viên    | `staff`  | `123456` |
 
-' 11. Controller returns to Web App
-"Controller" --> "Web App"
-deactivate "Controller"
+### Luồng bán hàng
 
-' 12. Final data rendering to Actor
-"Web App" --> Actor
-note left of "Web App"
-  Render data
-end note
-deactivate "Web App"
+1. Đăng nhập với tài khoản nhân viên hoặc chủ
+2. Vào **Bán hàng (POS)**
+3. Chọn khách hàng (hoặc để "Khách lẻ")
+4. Chọn sản phẩm, điều chỉnh số lượng
+5. Chọn phương thức: **Tiền mặt** hoặc **Ghi nợ**
+6. Bấm **Thanh toán**
 
-@enduml
-=======
+## 📁 Cấu trúc thư mục
+
+```
+Flask-CleanArchitecture/
+├── src/                          # Backend source
+│   ├── api/                      # API Layer
+│   │   ├── controllers/          # Route handlers
+│   │   ├── schemas/              # Validation schemas
+│   │   └── routes.py             # Route registration
+│   ├── domain/                   # Domain Layer
+│   │   ├── models/               # Domain entities
+│   │   └── interfaces/           # Repository interfaces
+│   ├── infrastructure/           # Infrastructure Layer
+│   │   ├── models/               # SQLAlchemy models
+│   │   ├── repositories/         # Repository implementations
+│   │   └── databases/            # Database configuration
+│   └── services/                 # Application services
+├── frontend/                     # Frontend (Next.js)
+│   └── src/
+│       ├── app/                  # Next.js App Router
+│       ├── components/           # React components
+│       └── contexts/             # React contexts
+├── .env                          # Environment config
+├── run.py                        # Backend entry point
+└── seed_vietnamese.py            # Sample data seeder
+```
+
+## 🔒 Bảo mật
+
+- Mật khẩu được hash bằng **bcrypt**
+- Authentication qua **JWT Token**
+- Phân quyền 3 cấp (Admin/Owner/Employee)
+- Tài khoản có thể bị vô hiệu hóa bởi Admin Platform
+
+## 📝 API Endpoints
+
+| Method | Endpoint             | Mô tả                       |
+| ------ | -------------------- | --------------------------- |
+| POST   | `/api/auth/login`    | Đăng nhập                   |
+| POST   | `/api/auth/register` | Tạo tài khoản (Admin/Owner) |
+| GET    | `/api/products`      | Danh sách sản phẩm          |
+| POST   | `/api/products`      | Thêm sản phẩm               |
+| GET    | `/api/customers`     | Danh sách khách hàng        |
+| POST   | `/api/customers`     | Thêm khách hàng             |
+| POST   | `/api/orders`        | Tạo đơn hàng                |
+| GET    | `/api/categories`    | Danh sách danh mục          |
+
+Swagger UI: http://localhost:6868/docs
+
+## 📄 License
+
+MIT License
+
+## 👨‍💻 Tác giả
+
+Developed with ❤️
+
+---
+
+⭐ Nếu dự án hữu ích, hãy cho một star nhé!

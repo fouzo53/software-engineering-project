@@ -205,3 +205,24 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Environment files with secrets
+.env
+.env.local
+.env.production
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Migration scripts (temporary)
+migrate_*.py
+
+# Old documentation
+MIGRATION_*.md
+FRONTEND_MIGRATION_GUIDE.md
+QUICK_START_TEST.md
+INTEGRATION_GUIDE.md
+README_DOCS.md
+ATTRIBUTIONS.md

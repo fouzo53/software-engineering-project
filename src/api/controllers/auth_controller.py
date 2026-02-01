@@ -1,148 +1,215 @@
-from flask import Blueprint, request, jsonify, current_app
-from datetime import datetime, timedelta
-from infrastructure.models.user_model import UserModel
-from infrastructure.databases.mssql import session
-from api.schemas.auth import RigisterUserRequestSchema,RigisterUserResponseSchema
-from services.auth_service import AuthService
-from infrastructure.repositories.auth_repository import AuthRepository
-from hashlib import sha256
-import jwt
-from werkzeug.security import generate_password_hash, check_password_hash
-auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
-auth_service = AuthService(AuthRepository(session))
-register_request = RigisterUserRequestSchema()
-register_response = RigisterUserResponseSchema()
-@auth_bp.route('/check_router', methods=['GET'])
-def check_router():
-    """
-    Check router
-    ---
-    get:
-      summary: Check router health
-      tags:
-        - Auth
-      responses:
-        200:
-          description: Router is working
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-    """
-    return jsonify({'message': 'Router is working!'}), 200
+from flask import Blueprint, request, jsonify, g
+from marshmallow import ValidationError
+from src.api.schemas.user_schema import LoginSchema, RegisterSchema, LoginResponseSchema, RegisterResponseSchema
+from src.services.auth_service import AuthService
+
+auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+
 
 @auth_bp.route('/login', methods=['POST'])
-def login():
+def login(auth_service: AuthService):
     """
-    Login user
+    Đăng nhập hệ thống
     ---
-    post:
-      summary: Login user
-      requestBody:
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginUserRequest'
-      tags:
-        - Auth
-      responses:
-        200:
-          description: Successful login
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginUserResponse'
-        401:
-          description: Invalid credentials
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+        schema:
+          type: object
+          required:
+            - username
+            - password
+          properties:
+            username:
+              type: string
+              example: "admin"
+            password:
+              type: string
+              example: "password123"
+    responses:
+      200:
+        description: Đăng nhập thành công
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+            message:
+              type: string
+            token:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                username:
+                  type: string
+                role:
+                  type: string
+                full_name:
+                  type: string
+      400:
+        description: Lỗi dữ liệu đầu vào
+      401:
+        description: Tên đăng nhập hoặc mật khẩu không đúng
     """
-    data = request.get_json()
-    username=data['username'],
-    password=data['password']
-    password = generate_password_hash(password)
-    user = auth_service.login(username, password)
-    if not user:
-        return jsonify({'error': 'Invalid credentials'}), 401
+    try:
+        # Validate input
+        schema = LoginSchema()
+        data = schema.load(request.get_json())
+        
+        # Login
+        result = auth_service.login(data['username'], data['password'])
+        
+        if result['success']:
+            response_schema = LoginResponseSchema()
+            return jsonify(response_schema.dump(result)), 200
+        else:
+            return jsonify({"error": result['message']}), 401
+            
+    except ValidationError as e:
+        return jsonify({"error": e.messages}), 400
 
-    payload = {
-        'user_id': user.id,
-        'exp': datetime.utcnow() + timedelta(hours=2)
-    }
-    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
-    return jsonify({'token': token})
 
-
-@auth_bp.route('/signup', methods=['POST'])
-def register():
+@auth_bp.route('/register', methods=['POST'])
+def register(auth_service: AuthService):
     """
-    Register a new user
+    Đăng ký tài khoản mới
     ---
-    post:
-      summary: Register a new user
-      requestBody:
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RigisterUserRequest'
-      tags:
-        - Auth
-      responses:
-        201:
-          description: User registered successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RigisterUserResponse'
-        400:
-          description: Invalid input or user exists
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+        schema:
+          type: object
+          required:
+            - username
+            - password
+            - full_name
+          properties:
+            username:
+              type: string
+              example: "newuser"
+            password:
+              type: string
+              example: "password123"
+            full_name:
+              type: string
+              example: "Nguyen Van A"
+            role:
+              type: string
+              example: "user"
+              default: "user"
+    responses:
+      201:
+        description: Đăng ký tài khoản thành công
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+            message:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                username:
+                  type: string
+                role:
+                  type: string
+                full_name:
+                  type: string
+      400:
+        description: Lỗi dữ liệu hoặc tên đăng nhập đã tồn tại
+      403:
+        description: Chỉ Admin mới được tạo tài khoản
     """
-    data = request.get_json()
-    errors = register_request.validate(data)
-    if errors:
-      return jsonify(errors), 400
-    # Lay thong tin tu nguoi dung truyen vao
+    try:
+        # Check if user is admin or owner (admin and owner can create accounts)
+        if not g.user or g.user.get('role') not in ['admin', 'owner']:
+            return jsonify({"error": "Chỉ Admin/Owner mới được tạo tài khoản!"}), 403
+        
+        # Validate input
+        schema = RegisterSchema()
+        data = schema.load(request.get_json())
+        
+        # Register
+        result = auth_service.register(
+            username=data['username'],
+            password=data['password'],
+            full_name=data['full_name'],
+            role=data.get('role', 'user')
+        )
+        
+        if result['success']:
+            response_schema = RegisterResponseSchema()
+            return jsonify(response_schema.dump(result)), 201
+        else:
+            return jsonify({"error": result['message']}), 400
+            
+    except ValidationError as e:
+        return jsonify({"error": e.messages}), 400
 
-    # Support JSON body and avoid KeyError by using .get()
-    username = data.get('username') if isinstance(data, dict) else None
-    password = data.get('password') if isinstance(data, dict) else None
-    passwordconfirm = data.get('passwordconfirm') if isinstance(data, dict) else None
-    email = data.get('email') if isinstance(data, dict) else None
 
-    if not username or not password or not passwordconfirm or not email:
-      return jsonify({'message': 'Missing required fields: username, password, passwordconfirm, email'}), 400
+@auth_bp.route('/users', methods=['GET'])
+def get_users(auth_service: AuthService):
+    """
+    Lấy danh sách người dùng (Admin hoặc Owner)
+    ---
+    tags:
+      - Auth
+    security:
+      - Bearer: []
+    responses:
+      200:
+        description: Danh sách người dùng
+      403:
+        description: Không có quyền truy cập
+    """
+    # Check if user is admin or owner
+    if not g.user or g.user.get('role') not in ['admin', 'owner']:
+        return jsonify({"error": "Chỉ Admin/Owner mới được xem danh sách tài khoản!"}), 403
+    
+    users = auth_service.get_all_users()
+    return jsonify({"data": users}), 200
 
-    if password != passwordconfirm:
-      return jsonify({'message': 'Passwords do not match'}), 400
 
-    if auth_service.check_exist(username):
-      return jsonify({'message': 'User already exists. Please login.'}), 400
-    #  vieets theo kien truc clean architecture
-    # password_hashed = Str.encode()(password)
-    password_hashed =generate_password_hash(password)
-    new_user = auth_service.register(username, password_hashed, email)
-    if not new_user:
-      return jsonify({'message': 'Registration failed'}), 500 
-    result = register_response.dump(new_user)
-    return jsonify(result), 201
-
-    #     return redirect(url_for('login'))
-
-    # return render_template('register.html')
+@auth_bp.route('/users/<int:user_id>/toggle-status', methods=['PUT'])
+def toggle_user_status(user_id: int, auth_service: AuthService):
+    """
+    Kích hoạt/Vô hiệu hóa tài khoản (Chỉ Admin Platform)
+    ---
+    tags:
+      - Auth
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Cập nhật trạng thái thành công
+      403:
+        description: Không có quyền truy cập
+      404:
+        description: Không tìm thấy user
+    """
+    # Chỉ admin platform mới được vô hiệu hóa tài khoản
+    if not g.user or g.user.get('role') != 'admin':
+        return jsonify({"error": "Chỉ Admin Platform mới được vô hiệu hóa tài khoản!"}), 403
+    
+    result = auth_service.toggle_user_status(user_id)
+    if result['success']:
+        return jsonify(result), 200
+    else:
+        return jsonify({"error": result['message']}), 404
