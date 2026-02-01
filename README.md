@@ -231,7 +231,7 @@ MIT License
 
 ## 👨‍💻 Tác giả
 
-Developed with ❤️
+Developed with ❤️ by **Lê Ngọc Châu**
 
 ---
 
