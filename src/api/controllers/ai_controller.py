@@ -1,4 +1,6 @@
 from flask import Blueprint, request, jsonify
+import os
+from werkzeug.utils import secure_filename
 from marshmallow import ValidationError
 from src.infrastructure.services.ai_service import AIService
 
@@ -179,6 +181,43 @@ def confirm_draft(draft_id: int, ai_service: AIService):
             return jsonify(result), 200
         else:
             return jsonify({"error": result.get('message', 'Lỗi khi tạo đơn hàng')}), 400
+            
+    except Exception as e:
+        return jsonify({"error": f"Lỗi: {str(e)}"}), 500
+
+
+@ai_bp.route('/parse-voice-order', methods=['POST'])
+def parse_voice_order(ai_service: AIService):
+    """
+    Phân tích đơn hàng qua giọng nói
+    """
+    try:
+        if 'audio' not in request.files:
+            return jsonify({"error": "Không tìm thấy file âm thanh"}), 400
+        
+        file = request.files['audio']
+        if file.filename == '':
+            return jsonify({"error": "File âm thanh không hợp lệ"}), 400
+        
+        # Lưu tạm file để xử lý
+        upload_folder = 'uploads/temp'
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+            
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(upload_folder, filename)
+        file.save(filepath)
+        
+        # Gọi service để xử lý
+        result = ai_service.parse_audio_order(filepath)
+        
+        # Xóa file sau khi xử lý xong (tùy chọn)
+        # os.remove(filepath)
+        
+        if result['success']:
+            return jsonify(result), 200
+        else:
+            return jsonify({"error": result.get('message', 'Lỗi khi phân tích giọng nói')}), 400
             
     except Exception as e:
         return jsonify({"error": f"Lỗi: {str(e)}"}), 500

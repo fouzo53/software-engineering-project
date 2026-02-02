@@ -149,13 +149,13 @@ def main():
         admin = UserModel(
             username="admin",
             password_hash=hash_password("123456"),
-            full_name="Nguyễn Quản Lý",
+            full_name="Lê Ngọc Châu",
             role="owner",
             status="active",
             subscription="premium"
         )
         db.session.add(admin)
-        print("   ✓ Owner: admin / 123456 (Nguyễn Quản Lý)")
+        print("   ✓ Owner: admin / 123456 (Lê Ngọc Châu)")
         
         # Employee (Nhân viên)
         staff = UserModel(
@@ -312,7 +312,7 @@ def main():
    • Đơn hàng:     {orders_count} đơn hàng
 
 🔐 ĐĂNG NHẬP:
-   • admin / 123456 → Nguyễn Quản Lý (Chủ cửa hàng)
+   • admin / 123456 → Lê Ngọc Châu (Chủ cửa hàng)
    • staff / 123456 → Trần Nhân Viên (Nhân viên)
 
 🌐 Truy cập: http://localhost:3000

@@ -8,6 +8,7 @@ from src.infrastructure.models.product_model import ProductModel
 from src.infrastructure.models.customer_model import CustomerModel
 from src.infrastructure.models.order_model import OrderModel, OrderDetailModel
 from src.infrastructure.databases.database import db
+from src.infrastructure.services.stt_service import stt_service
 
 
 class AIService:
@@ -18,45 +19,51 @@ class AIService:
         api_key = os.getenv("GOOGLE_API_KEY", "")
         if api_key:
             genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel("gemini-1.5-flash")
+        self.model = genai.GenerativeModel("gemini-flash-latest")
     
     def parse_order_text(self, text: str) -> Dict:
         """
-        Phân tích câu lệnh bán hàng bằng AI
-        Input: "Bán 5 bao xi măng cho anh Nam nợ nhé"
-        Output: {
-            "success": bool,
-            "draft_id": int,
-            "items": [...],
-            "customer": {...},
-            "payment_method": "DEBT/CASH"
-        }
+        Phân tích câu lệnh bán hàng bằng AI theo chuẩn contract @docs/ai-draft-order-contract.md
         """
         try:
-            # Bước 1: Dùng AI để parse text
+            # Bước 1: Dùng AI để parse text với prompt chi tiết hơn
             prompt = f"""
-            Phân tích câu lệnh bán hàng sau và trích xuất thông tin:
+            Bạn là điều phối viên bán hàng thông minh. Hãy phân tích lệnh sau từ nhân viên:
             "{text}"
             
-            Trả về JSON format chính xác:
+            Hãy bóc tách thông tin và trả về JSON chuẩn sau:
             {{
+                "customer": {{
+                    "name": "tên khách",
+                    "confidence": 0.0-1.0
+                }},
                 "items": [
-                    {{"product_name": "tên sản phẩm", "quantity": số_lượng}}
+                    {{
+                        "product_name": "tên SP",
+                        "quantity": số_lượng,
+                        "unit": "đơn vị (bao/viên/kg...)",
+                        "confidence": 0.0-1.0
+                    }}
                 ],
-                "customer_name": "tên khách hàng (nếu có)",
-                "payment_method": "DEBT hoặc CASH (nếu có từ 'nợ', 'trả sau' thì DEBT, ngược lại CASH)"
+                "payment": {{
+                    "type": "CASH" hoặc "DEBT",
+                    "confidence": 0.0-1.0
+                }},
+                "overall_confidence": 0.0-1.0,
+                "issues": ["mô tả các vấn đề nếu có"],
+                "warnings": ["cảnh báo cho người dùng"]
             }}
             
-            Lưu ý:
-            - Nếu không có tên khách hàng, để customer_name là null
-            - Nếu không có phương thức thanh toán rõ ràng, mặc định là CASH
-            - Chỉ trả về JSON, không giải thích gì thêm
+            Quy tắc:
+            - Nếu không rõ khách, name = null.
+            - Nếu có từ "nợ", "ghi sổ", "trả sau" -> payment.type = "DEBT".
+            - Mặc định payment.type = "CASH".
+            - Chỉ trả về JSON nguyên bản.
             """
             
             response = self.model.generate_content(prompt)
             response_text = response.text.strip()
             
-            # Remove markdown code blocks if present
             if response_text.startswith("```"):
                 response_text = response_text.split("```")[1]
                 if response_text.startswith("json"):
@@ -64,71 +71,63 @@ class AIService:
             
             parsed = json.loads(response_text)
             
-            # Bước 2: Tìm sản phẩm trong database
-            items_with_ids = []
+            # Bước 2: Khớp dữ liệu với Database
+            final_items = []
             total_amount = 0.0
             
             for item in parsed.get("items", []):
-                product_name = item.get("product_name", "")
-                quantity = item.get("quantity", 0)
+                p_name = item.get("product_name", "")
+                qty = item.get("quantity", 0)
                 
-                # Tìm product gần đúng nhất
+                # Tìm product gần đúng
                 product = ProductModel.query.filter(
-                    ProductModel.name.ilike(f"%{product_name}%")
+                    ProductModel.name.ilike(f"%{p_name}%")
                 ).first()
                 
+                item_node = {
+                    "product": {
+                        "match_type": "exact" if product else "none",
+                        "product_id": product.id if product else None,
+                        "name": product.name if product else p_name,
+                        "confidence": item.get("confidence", 0.5)
+                    },
+                    "quantity": qty,
+                    "unit": item.get("unit", "cái"),
+                    "unit_confidence": 0.9,
+                    "notes": None
+                }
+                
                 if product:
-                    items_with_ids.append({
-                        "product_id": product.id,
-                        "product_name": product.name,
-                        "quantity": quantity,
-                        "price": product.price,
-                        "subtotal": product.price * quantity
-                    })
-                    total_amount += product.price * quantity
+                    price = product.price or product.selling_price or 0
+                    total_amount += price * qty
                 else:
-                    items_with_ids.append({
-                        "product_id": None,
-                        "product_name": product_name,
-                        "quantity": quantity,
-                        "price": 0,
-                        "subtotal": 0,
-                        "error": "Không tìm thấy sản phẩm trong kho"
-                    })
+                    item_node["notes"] = "Không tìm thấy sản phẩm trong kho"
+                
+                final_items.append(item_node)
             
-            # Bước 3: Tìm khách hàng trong database
-            customer_name = parsed.get("customer_name")
-            customer_info = None
-            
+            # Bước 3: Tìm khách hàng
+            customer_name = parsed.get("customer", {}).get("name")
+            customer_node = None
             if customer_name:
                 customer = CustomerModel.query.filter(
                     CustomerModel.name.ilike(f"%{customer_name}%")
                 ).first()
-                
-                if customer:
-                    customer_info = {
-                        "customer_id": customer.id,
-                        "customer_name": customer.name,
-                        "phone": customer.phone,
-                        "debt_amount": customer.debt_amount
-                    }
-                else:
-                    customer_info = {
-                        "customer_id": None,
-                        "customer_name": customer_name,
-                        "found": False,
-                        "message": "Khách hàng chưa có trong hệ thống"
-                    }
+                customer_node = {
+                    "match_type": "exact" if customer else "none",
+                    "customer_id": customer.id if customer else None,
+                    "name": customer.name if customer else customer_name,
+                    "confidence": parsed.get("customer", {}).get("confidence", 0.5)
+                }
             
-            # Bước 4: Lưu draft order vào database
-            payment_method = parsed.get("payment_method", "CASH").upper()
+            # Bước 4: Lưu Draft Order
+            payment_type = parsed.get("payment", {}).get("type", "CASH")
             
             draft = DraftOrderModel(
                 text_input=text,
                 parsed_data=json.dumps(parsed, ensure_ascii=False),
-                customer_id=customer_info.get("customer_id") if customer_info else None,
+                customer_id=customer_node.get("customer_id") if customer_node else None,
                 customer_name=customer_name,
-                payment_method=payment_method,
+                payment_method=payment_type,
                 total_amount=total_amount,
                 status='draft'
             )
@@ -136,20 +135,60 @@ class AIService:
             db.session.add(draft)
             db.session.commit()
             
+            # Trả về theo chuẩn Contract
             return {
                 "success": True,
+                "status": "ok" if parsed.get("overall_confidence", 0) > 0.6 else "needs_review",
                 "draft_id": draft.id,
-                "items": items_with_ids,
-                "customer": customer_info,
-                "payment_method": payment_method,
-                "total_amount": total_amount,
-                "message": "Đã phân tích thành công. Kiểm tra và xác nhận đơn hàng."
+                "transcript": {
+                    "original_text": text,
+                    "normalized_text": text,
+                    "source": "user_input"
+                },
+                "draft_order": {
+                    "customer": customer_node,
+                    "items": final_items,
+                    "payment": {
+                        "type": payment_type.lower(),
+                        "confidence": parsed.get("payment", {}).get("confidence", 0.5)
+                    },
+                    "total_amount": total_amount
+                },
+                "confidence": parsed.get("overall_confidence", 0.5),
+                "issues": parsed.get("issues", []),
+                "warnings": parsed.get("warnings", []),
+                "message": "Đã phân tích thành công."
             }
             
         except Exception as e:
             return {
                 "success": False,
-                "message": f"Lỗi khi phân tích: {str(e)}"
+                "message": f"Lỗi parse AI: {str(e)}"
+            }
+
+    def parse_audio_order(self, audio_path: str) -> Dict:
+        """
+        Chuyển audio -> text và parse thành order
+        """
+        try:
+            # 1. Chuyển voice sang text
+            text = stt_service.transcribe(audio_path)
+            if not text:
+                return {
+                    "success": False,
+                    "message": "Không thể chuyển đổi âm thanh sang văn bản"
+                }
+            
+            # 2. Parse text thành order
+            result = self.parse_order_text(text)
+            
+            # Thêm transcript vào kết quả
+            result["transcript"] = text
+            return result
+        except Exception as e:
+            return {
+                "success": False,
+                "message": f"Lỗi xử lý audio: {str(e)}"
             }
     
     def confirm_draft_order(self, draft_id: int) -> Dict:

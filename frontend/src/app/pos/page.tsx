@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { AiOrderDialog } from "@/components/ai/AiOrderDialog";
 
 interface Product {
   id: number;
@@ -200,6 +201,7 @@ export default function POSPage() {
               {isOwner ? "Admin" : "Nhân viên"}
             </Badge>
           </div>
+          <AiOrderDialog />
         </div>
       </header>
 
@@ -335,21 +337,19 @@ export default function POSPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setPaymentMethod("CASH")}
-                    className={`flex-1 py-2 rounded-lg border transition-all ${
-                      paymentMethod === "CASH"
+                    className={`flex-1 py-2 rounded-lg border transition-all ${paymentMethod === "CASH"
                         ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
                         : "bg-white/5 border-white/20 text-white"
-                    }`}
+                      }`}
                   >
                     Tiền mặt
                   </button>
                   <button
                     onClick={() => setPaymentMethod("DEBT")}
-                    className={`flex-1 py-2 rounded-lg border transition-all ${
-                      paymentMethod === "DEBT"
+                    className={`flex-1 py-2 rounded-lg border transition-all ${paymentMethod === "DEBT"
                         ? "bg-amber-500/20 border-amber-500 text-amber-400"
                         : "bg-white/5 border-white/20 text-white"
-                    }`}
+                      }`}
                   >
                     Ghi nợ
                   </button>

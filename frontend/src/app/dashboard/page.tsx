@@ -14,11 +14,11 @@ import {
   ShoppingCart,
   LogOut,
   Store,
-  Bot,
   UserPlus,
   Crown,
 } from "lucide-react";
 import Link from "next/link";
+import { AiOrderDialog } from "@/components/ai/AiOrderDialog";
 
 interface Product {
   id: number;
@@ -138,12 +138,7 @@ export default function DashboardPage() {
                 Khách hàng
               </Button>
             </Link>
-            <Link href="/ai">
-              <Button className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600">
-                <Bot className="w-4 h-4 mr-2" />
-                Trợ lý AI
-              </Button>
-            </Link>
+            <AiOrderDialog />
             {isOwner && (
               <Link href="/dashboard/users">
                 <Button
@@ -175,7 +170,7 @@ export default function DashboardPage() {
               Đăng xuất
             </Button>
           </div>
-        </div>
+        </div >
       </header>
 
       {/* Main Content */}
@@ -241,10 +236,10 @@ export default function DashboardPage() {
               )}
             </CardContent>
           </Card>
-        </div>
+        </div >
 
         {/* Products List */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 mb-8">
+        < Card className="backdrop-blur-xl bg-white/10 border-white/20 mb-8" >
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Package className="w-5 h-5" />
@@ -283,57 +278,59 @@ export default function DashboardPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </Card >
 
         {/* Customers with Debt - Only for Owner */}
-        {isOwner && (
-          <Card className="backdrop-blur-xl bg-white/10 border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Khách hàng có công nợ
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="text-center text-violet-300 py-8">
-                  Đang tải...
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {customers
-                    .filter((c) => c.debt_amount > 0)
-                    .map((customer) => (
-                      <div
-                        key={customer.id}
-                        className="flex justify-between items-center p-3 rounded-lg bg-white/5 border border-white/10"
-                      >
-                        <div>
-                          <h3 className="font-medium text-white">
-                            {customer.name}
-                          </h3>
-                          <p className="text-sm text-violet-300">
-                            {customer.phone}
-                          </p>
+        {
+          isOwner && (
+            <Card className="backdrop-blur-xl bg-white/10 border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Khách hàng có công nợ
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="text-center text-violet-300 py-8">
+                    Đang tải...
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {customers
+                      .filter((c) => c.debt_amount > 0)
+                      .map((customer) => (
+                        <div
+                          key={customer.id}
+                          className="flex justify-between items-center p-3 rounded-lg bg-white/5 border border-white/10"
+                        >
+                          <div>
+                            <h3 className="font-medium text-white">
+                              {customer.name}
+                            </h3>
+                            <p className="text-sm text-violet-300">
+                              {customer.phone}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-amber-400 font-bold">
+                              {formatCurrency(customer.debt_amount)}
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-amber-400 font-bold">
-                            {formatCurrency(customer.debt_amount)}
-                          </p>
-                        </div>
+                      ))}
+                    {customers.filter((c) => c.debt_amount > 0).length === 0 && (
+                      <div className="text-center text-violet-300 py-4">
+                        Không có khách hàng nợ
                       </div>
-                    ))}
-                  {customers.filter((c) => c.debt_amount > 0).length === 0 && (
-                    <div className="text-center text-violet-300 py-4">
-                      Không có khách hàng nợ
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-      </main>
-    </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )
+        }
+      </main >
+    </div >
   );
 }

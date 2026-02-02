@@ -225,4 +225,9 @@ FRONTEND_MIGRATION_GUIDE.md
 QUICK_START_TEST.md
 INTEGRATION_GUIDE.md
 README_DOCS.md
-ATTRIBUTIONS.md
+
+# AI Agent internal data
+.agent/
+
+# Uploaded files
+uploads/
