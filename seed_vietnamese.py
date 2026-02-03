@@ -12,7 +12,11 @@ import sys
 import io
 import random
 from datetime import datetime, timedelta
+import os
 import bcrypt
+
+# Thêm src vào Python path để đồng bộ với run.py
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 # Fix UTF-8 encoding on Windows
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
