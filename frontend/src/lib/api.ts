@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:6868/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6868/api";
 
 async function fetcher(endpoint: string, options: RequestInit = {}) {
     const token = typeof window !== "undefined" ? localStorage.getItem("bizflow_token") : null;
@@ -68,7 +68,7 @@ export const aiAPI = {
 
         // We can't use the 'fetcher' helper directly because of FormData and Authorization
         const token = typeof window !== "undefined" ? localStorage.getItem("bizflow_token") : null;
-        return fetch("http://localhost:6868/api/ai/parse-voice-order", {
+        return fetch(`${API_URL}/ai/parse-voice-order`, {
             method: "POST",
             headers: {
                 ...(token && { Authorization: `Bearer ${token}` }),
