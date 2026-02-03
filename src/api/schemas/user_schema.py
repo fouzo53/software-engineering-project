@@ -21,6 +21,7 @@ class UserSchema(Schema):
     username = fields.Str()
     role = fields.Str()
     full_name = fields.Str()
+    subscription = fields.Str()
 
 
 class LoginResponseSchema(Schema):

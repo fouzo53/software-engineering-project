@@ -10,6 +10,7 @@ class ProductSchema(Schema):
     stock = fields.Int(required=True, validate=validate.Range(min=0))
     category_id = fields.Int(required=True)
     image_url = fields.Str(load_default=None)
+    unit = fields.Str(load_default='cái')
 
 
 class ProductImportSchema(Schema):

@@ -110,9 +110,6 @@ export default function CustomersPage() {
               </Button>
             </Link>
             <h1 className="text-xl font-bold text-white">Quản lý khách hàng</h1>
-            <Badge className={isOwner ? "bg-red-500" : "bg-blue-500"}>
-              {isOwner ? "Admin" : "Nhân viên"}
-            </Badge>
           </div>
           <Button
             onClick={() => setShowAddForm(true)}
@@ -264,11 +261,10 @@ export default function CustomersPage() {
                         <div className="text-right">
                           <p className="text-sm text-violet-300">Công nợ</p>
                           <p
-                            className={`text-xl font-bold ${
-                              customer.debt_amount > 0
+                            className={`text-xl font-bold ${customer.debt_amount > 0
                                 ? "text-amber-400"
                                 : "text-emerald-400"
-                            }`}
+                              }`}
                           >
                             {formatCurrency(customer.debt_amount || 0)}
                           </p>

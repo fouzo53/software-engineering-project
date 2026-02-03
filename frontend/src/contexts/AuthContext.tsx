@@ -7,6 +7,7 @@ interface User {
   username: string;
   full_name?: string;
   role: string;
+  subscription: string;
 }
 
 interface AuthContextType {

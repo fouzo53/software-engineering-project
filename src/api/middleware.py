@@ -70,3 +70,19 @@ def admin_required(f):
         return f(*args, **kwargs)
     
     return decorated
+
+
+def staff_required(f):
+    """Decorator để kiểm tra role owner hoặc employee"""
+    @wraps(f)
+    @token_required
+    def decorated(*args, **kwargs):
+        if not hasattr(request, 'current_user'):
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        if request.current_user['role'] not in ['owner', 'employee']:
+            return jsonify({'error': 'Chỉ Owner hoặc Nhân viên mới có quyền truy cập'}), 403
+        
+        return f(*args, **kwargs)
+    
+    return decorated

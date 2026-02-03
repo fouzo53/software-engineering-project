@@ -10,7 +10,9 @@ class WhisperSTTService:
     Service xử lý Speech-to-Text sử dụng OpenAI Whisper (Local).
     """
 
-    def __init__(self, model_name: str = "base"):
+    def __init__(self, model_name: str = "turbo"):
+        # gợi ý: "small" cho chất lượng tốt hơn "base";
+        # nếu máy yếu có thể để lại "base"
         self.model_name = model_name
         self._model = None
 
@@ -18,16 +20,13 @@ class WhisperSTTService:
     def model(self):
         if self._model is None:
             logger.info(f"Loading Whisper model: {self.model_name}...")
-            # Load model vào CPU/GPU tùy thuộc vào phần cứng có sẵn
             self._model = whisper.load_model(self.model_name)
             logger.info("Whisper model loaded successfully.")
         return self._model
 
     def transcribe(self, audio_path: str) -> Optional[str]:
         """
-        Chuyển đổi file âm thanh sang văn bản.
-        :param audio_path: Đường dẫn đến file âm thanh (mp3, wav, m4a, ...)
-        :return: Văn bản đã transcribe hoặc None nếu lỗi
+        Chuyển đổi file âm thanh sang văn bản tiếng Việt.
         """
         if not os.path.exists(audio_path):
             logger.error(f"Audio file not found: {audio_path}")
@@ -35,13 +34,20 @@ class WhisperSTTService:
 
         try:
             logger.info(f"Transcribing audio: {audio_path}...")
-            result = self.model.transcribe(audio_path, language="vi")
-            transcript = result.get("text", "").strip()
+            result = self.model.transcribe(
+                audio_path,
+                language="vi",
+                task="transcribe",
+                beam_size=5,
+                temperature=0.0,
+                condition_on_previous_text=False,
+            )
+            transcript = (result.get("text") or "").strip()
             logger.info(f"Transcription result: {transcript}")
-            return transcript
+            return transcript if transcript else None
         except Exception as e:
             logger.error(f"Error during transcription: {str(e)}")
             return None
 
 # Singleton instance
-stt_service = WhisperSTTService(model_name="base")
+stt_service = WhisperSTTService()

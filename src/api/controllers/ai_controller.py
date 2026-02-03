@@ -1,13 +1,15 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 import os
 from werkzeug.utils import secure_filename
 from marshmallow import ValidationError
 from src.infrastructure.services.ai_service import AIService
+from src.api.middleware import token_required, staff_required
 
 ai_bp = Blueprint('ai', __name__, url_prefix='/api/ai')
 
 
 @ai_bp.route('/parse-order', methods=['POST'])
+@staff_required
 def parse_order(ai_service: AIService):
     """
     Phân tích câu lệnh bán hàng bằng AI
@@ -119,13 +121,14 @@ def parse_order(ai_service: AIService):
         if result['success']:
             return jsonify(result), 200
         else:
-            return jsonify({"error": result.get('message', 'Lỗi khi phân tích')}), 400
+            return jsonify({"message": result.get('message', 'Lỗi khi phân tích')}), 400
             
     except Exception as e:
         return jsonify({"error": f"Lỗi: {str(e)}"}), 500
 
 
 @ai_bp.route('/confirm-draft/<int:draft_id>', methods=['POST'])
+@staff_required
 def confirm_draft(draft_id: int, ai_service: AIService):
     """
     Xác nhận chuyển đơn nháp thành đơn hàng thật
@@ -175,18 +178,23 @@ def confirm_draft(draft_id: int, ai_service: AIService):
         description: Không tìm thấy đơn nháp
     """
     try:
-        result = ai_service.confirm_draft_order(draft_id)
+        user_id = request.current_user.get('user_id')
+        if not user_id:
+            return jsonify({"error": "Unauthorized"}), 401
+
+        result = ai_service.confirm_draft_order(draft_id, user_id)
         
         if result['success']:
             return jsonify(result), 200
         else:
-            return jsonify({"error": result.get('message', 'Lỗi khi tạo đơn hàng')}), 400
+            return jsonify({"message": result.get('message', 'Lỗi khi tạo đơn hàng')}), 400
             
     except Exception as e:
         return jsonify({"error": f"Lỗi: {str(e)}"}), 500
 
 
 @ai_bp.route('/parse-voice-order', methods=['POST'])
+@staff_required
 def parse_voice_order(ai_service: AIService):
     """
     Phân tích đơn hàng qua giọng nói
@@ -217,13 +225,14 @@ def parse_voice_order(ai_service: AIService):
         if result['success']:
             return jsonify(result), 200
         else:
-            return jsonify({"error": result.get('message', 'Lỗi khi phân tích giọng nói')}), 400
+            return jsonify({"message": result.get('message', 'Lỗi khi phân tích giọng nói')}), 400
             
     except Exception as e:
         return jsonify({"error": f"Lỗi: {str(e)}"}), 500
 
 
 @ai_bp.route('/draft', methods=['POST'])
+@staff_required
 def draft_order(ai_service: AIService):
     """
     Phân tích văn bản thành đơn nháp bằng AI (Legacy endpoint)

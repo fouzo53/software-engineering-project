@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, g
+from src.api.middleware import token_required, owner_required
 from marshmallow import ValidationError
 from src.api.schemas.product_schema import ProductSchema, ProductImportSchema
 from src.services.product_service import ProductService
@@ -7,6 +8,7 @@ product_bp = Blueprint('product', __name__, url_prefix='/api/products')
 
 
 @product_bp.route('', methods=['POST'])
+@owner_required
 def create_product(product_service: ProductService):
     """
     Tạo sản phẩm mới (Chỉ Owner)
@@ -53,14 +55,24 @@ def create_product(product_service: ProductService):
         description: Không có quyền truy cập (chỉ Owner)
     """
     try:
-        # Check role (only owner can create product)
-        if g.user.get('role') != 'owner':
-            return jsonify({"error": "Permission denied. Only owner can create products."}), 403
-        
         # Validate input
         schema = ProductSchema()
         data = schema.load(request.get_json())
         
+        # Check subscription limit
+        from src.infrastructure.models.user_model import UserModel
+        from src.infrastructure.models.product_model import ProductModel
+        from src.services.subscription_service import SubscriptionService
+        
+        user_id = request.current_user['user_id']
+        user = UserModel.query.get(user_id)
+        
+        current_count = ProductModel.query.count()
+        subscription_service = SubscriptionService()
+        
+        if not subscription_service.check_limit(user, 'products', current_count):
+            return jsonify({"error": "Đã đạt giới hạn số lượng sản phẩm của gói hiện tại (Basic: 50). Vui lòng nâng cấp!"}), 403
+
         # Create product
         result = product_service.create_product(
             name=data['name'],
@@ -79,6 +91,7 @@ def create_product(product_service: ProductService):
 
 
 @product_bp.route('', methods=['GET'])
+@token_required
 def get_products(product_service: ProductService):
     """
     Lấy danh sách sản phẩm
@@ -121,10 +134,11 @@ def get_products(product_service: ProductService):
     products = product_service.get_list(page=page, per_page=per_page)
     
     schema = ProductSchema(many=True)
-    return jsonify({"value": schema.dump(products)}), 200
+    return jsonify({"data": schema.dump(products)}), 200
 
 
 @product_bp.route('/import', methods=['POST'])
+@owner_required
 def import_stock(product_service: ProductService):
     """
     Nhập hàng vào kho
@@ -196,9 +210,6 @@ def import_stock(product_service: ProductService):
         description: Không tìm thấy sản phẩm
     """
     try:
-        # Check role (only owner can import stock)
-        if g.user.get('role') != 'owner':
-            return jsonify({"error": "Permission denied. Only owner can import stock."}), 403
         
         # Validate input
         schema = ProductImportSchema()
@@ -226,6 +237,7 @@ def import_stock(product_service: ProductService):
 
 
 @product_bp.route('/low-stock', methods=['GET'])
+@owner_required
 def get_low_stock(product_service: ProductService):
     """
     Lấy danh sách sản phẩm sắp hết hàng

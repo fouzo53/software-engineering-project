@@ -5,13 +5,17 @@ from src.domain.interfaces.product_repository import IProductRepository
 from src.domain.interfaces.category_repository import ICategoryRepository
 
 
+
+from src.services.bookkeeping_service import BookkeepingService
+
 class ProductService:
     """Service xử lý logic nghiệp vụ cho Product"""
     
     @inject
-    def __init__(self, product_repository: IProductRepository, category_repository: ICategoryRepository):
+    def __init__(self, product_repository: IProductRepository, category_repository: ICategoryRepository, bookkeeping_service: BookkeepingService):
         self.product_repository = product_repository
         self.category_repository = category_repository
+        self.bookkeeping_service = bookkeeping_service
     
     def create_product(self, name: str, price: float, stock: int, category_id: int) -> Dict:
         """
@@ -64,6 +68,17 @@ class ProductService:
         product = self.product_repository.import_stock(product_id, quantity, cost_price)
         
         if product:
+            # Ghi sổ kế toán (S2, S6)
+            try:
+                self.bookkeeping_service.record_import(
+                    product_id=product.id,
+                    quantity=quantity,
+                    price=cost_price,
+                    total_cost=quantity*cost_price
+                )
+            except Exception as e:
+                print(f"Bookkeeping error: {e}")
+
             return {
                 "success": True,
                 "message": "Nhập hàng thành công",

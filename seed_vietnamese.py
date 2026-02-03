@@ -30,24 +30,19 @@ from src.infrastructure.models.category_model import CategoryModel
 from src.infrastructure.models.product_model import ProductModel
 from src.infrastructure.models.customer_model import CustomerModel, DebtTransactionModel
 from src.infrastructure.models.order_model import OrderModel, OrderDetailModel
+from src.infrastructure.models.accounting_model import LedgerEntryModel, InventoryLogModel
 
 # Initialize Faker with Vietnamese locale
 fake = Faker('vi_VN')
 
-# ============================================================================
-# IMAGE MAPPING BY CATEGORY
-# ============================================================================
 CATEGORY_IMAGES = {
-    "Vật liệu xây dựng": "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=200",
-    "Sơn & Hóa chất": "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=200",
-    "Điện & Nước": "https://images.unsplash.com/photo-1605619869572-101140306385?w=200",
-    "Dụng cụ cầm tay": "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=200",
-    "Thiết bị vệ sinh": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=200",
+    "Vật liệu xây dựng": "/img/categories/vatlieuxaydung.webp",
+    "Sơn & Hóa chất": "/img/categories/sonvahoachat.webp",
+    "Điện & Nước": "/img/categories/dienvanuoc.webp",
+    "Dụng cụ cầm tay": "/img/categories/dungcucamtay.webp",
+    "Thiết bị vệ sinh": "/img/categories/thietbivesinh.webp",
 }
 
-# ============================================================================
-# VIETNAMESE PRODUCT DATA
-# ============================================================================
 CATEGORIES_DATA = {
     "Vật liệu xây dựng": [
         ("Xi măng Hà Tiên PCB40", 95000, 85000),
@@ -132,42 +127,48 @@ def main():
     app = create_app()
     
     with app.app_context():
-        # =============================================
-        # RESET DATABASE
-        # =============================================
         print("\n🗑️  Reset database...")
         db.drop_all()
         db.create_all()
         print("   ✓ Database đã được reset")
         
-        # =============================================
-        # CREATE USERS
-        # =============================================
         print("\n👤 Tạo tài khoản...")
         
         # Owner (Chủ cửa hàng)
+        owner = UserModel(
+            username="owner",
+            password_hash=hash_password("123456"),
+            full_name="Nguyễn Văn A",
+            role="owner",
+            status="active",
+            subscription="pro"
+        )
+        db.session.add(owner)
+        print("   ✓ Owner: owner / 123456 (Nguyễn Văn A)")
+
+        # Admin (Quản trị hệ thống)
         admin = UserModel(
             username="admin",
             password_hash=hash_password("123456"),
             full_name="Lê Ngọc Châu",
-            role="owner",
+            role="admin",
             status="active",
-            subscription="premium"
+            subscription="pro"
         )
         db.session.add(admin)
-        print("   ✓ Owner: admin / 123456 (Lê Ngọc Châu)")
+        print("   ✓ Admin: admin / 123456 (Lê Ngọc Châu)")
         
         # Employee (Nhân viên)
         staff = UserModel(
             username="staff",
             password_hash=hash_password("123456"),
-            full_name="Trần Nhân Viên",
+            full_name="Huỳnh Xuân Huy",
             role="employee",
             status="active",
-            subscription="basic"
+            subscription="pro"
         )
         db.session.add(staff)
-        print("   ✓ Employee: staff / 123456 (Trần Nhân Viên)")
+        print("   ✓ Employee: staff / 123456 (Huỳnh Xuân Huy)")
         
         db.session.commit()
         
@@ -190,11 +191,21 @@ def main():
             
             # Create products
             for prod_name, price, cost_price in products_list:
+                # Infer unit
+                unit = "cái"
+                if "xi măng" in prod_name.lower(): unit = "bao"
+                elif "cát" in prod_name.lower() or "đá" in prod_name.lower(): unit = "m³"
+                elif "gạch" in prod_name.lower(): unit = "viên"
+                elif "sơn" in prod_name.lower(): unit = "thùng"
+                elif "dây điện" in prod_name.lower() or "ống" in prod_name.lower(): unit = "cuộn"
+                elif "thép" in prod_name.lower(): unit = "cây"
+
                 product = ProductModel(
                     name=prod_name,
                     price=float(price),
                     cost_price=float(cost_price),
                     stock=random.randint(50, 500),
+                    unit=unit,
                     category_id=category.id,
                     image_url=image_url
                 )
@@ -249,7 +260,7 @@ def main():
         # =============================================
         print("\n🧾 Tạo đơn hàng...")
         
-        users = [admin, staff]
+        users = [owner, staff]
         orders_count = 0
         details_count = 0
         total_revenue = 0
@@ -275,6 +286,8 @@ def main():
             order_products = random.sample(all_products, min(num_items, len(all_products)))
             
             order_total = 0
+            ref_id = f"HD{order.id}" # Pre-calculate ref_id
+            
             for product in order_products:
                 quantity = random.randint(1, 10)
                 line_total = product.price * quantity
@@ -288,10 +301,61 @@ def main():
                 )
                 db.session.add(detail)
                 details_count += 1
+                
+                # S2: Xuất kho
+                s2 = InventoryLogModel(
+                    transaction_date=order_date,
+                    reference_id=ref_id,
+                    product_id=product.id,
+                    description=f"Xuất bán đơn {ref_id}",
+                    export_qty=quantity,
+                    export_price=product.cost_price,
+                    balance_qty=product.stock - quantity, # Estimate
+                    balance_value=(product.stock - quantity) * product.cost_price
+                )
+                db.session.add(s2)
             
             order.total_amount = order_total
+            order.payment_method = 'CASH'
             total_revenue += order_total
             orders_count += 1
+            
+            # --- Generate Ledger Entries (S1, S2, S6) ---
+            ref_id = f"HD{order.id}"
+            
+            # S1: Doanh thu
+            s1 = LedgerEntryModel(
+                transaction_date=order_date,
+                reference_id=ref_id,
+                description=f"Doanh thu bán hàng đơn {ref_id}",
+                ledger_type="S1",
+                amount=order_total,
+                tax_group="Phân phối, cung cấp hàng hóa"
+            )
+            db.session.add(s1)
+            
+            # S6: Thu tiền (CASH)
+            s6 = LedgerEntryModel(
+                transaction_date=order_date,
+                reference_id=f"PT{order.id}",
+                description=f"Thu tiền bán hàng đơn {ref_id}",
+                ledger_type="S6",
+                amount=order_total,
+                transaction_type="RECEIPT"
+            )
+            db.session.add(s6)
+            
+            # S2: Xuất kho (cho từng sản phẩm)
+            # Lưu ý: Cần loop lại details vừa tạo
+            # Tuy nhiên details chưa có id nếu chưa flush, nhưng ở đây ta dùng logic tạo luôn
+            pass # Done in loop above? No we created OrderDetail models.
+                 # Let's iterate `order_products` again or use the loop variables.
+            
+            # Re-iterate order products logic for S2
+            # (We didn't store details in a list corresponding to products perfectly in the previous logic block structure, 
+            # so let's just do it simply based on what we just added)
+            # Actually, we can just do it inside the product loop below.
+
         
         db.session.commit()
         print(f"   ✓ Đã tạo {orders_count} đơn hàng, {details_count} chi tiết")
@@ -305,17 +369,17 @@ def main():
         print("=" * 60)
         print(f"""
 📊 THỐNG KÊ:
-   • Tài khoản:    2 (admin + staff)
+   • Tài khoản:    3 (admin + owner + staff)
    • Danh mục:     {len(CATEGORIES_DATA)} danh mục
    • Sản phẩm:     {total_products} sản phẩm (có hình ảnh)
    • Khách hàng:   20 khách hàng
    • Đơn hàng:     {orders_count} đơn hàng
 
 🔐 ĐĂNG NHẬP:
-   • admin / 123456 → Lê Ngọc Châu (Chủ cửa hàng)
-   • staff / 123456 → Trần Nhân Viên (Nhân viên)
+   • owner / 123456 → Nguyễn Văn A (Chủ cửa hàng)
+   • admin / 123456 → Lê Ngọc Châu (Quản trị hệ thống)
+   • staff / 123456 → Huỳnh Xuân Huy (Nhân viên)
 
-🌐 Truy cập: http://localhost:3000
 """)
 
 

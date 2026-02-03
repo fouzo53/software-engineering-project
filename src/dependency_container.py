@@ -17,6 +17,7 @@ from src.services.report_service import ReportService
 from src.services.customer_service import CustomerService
 from src.services.employee_service import EmployeeService
 from src.services.admin_service import AdminService
+from src.services.notification_service import NotificationService
 from src.infrastructure.services.ai_service import AIService
 
 
@@ -37,3 +38,7 @@ def configure(binder: Binder) -> None:
     binder.bind(EmployeeService, scope=singleton)
     binder.bind(AdminService, scope=singleton)
     binder.bind(AIService, scope=singleton)
+    binder.bind(NotificationService, scope=singleton)
+    
+    from src.services.bookkeeping_service import BookkeepingService
+    binder.bind(BookkeepingService, scope=singleton)

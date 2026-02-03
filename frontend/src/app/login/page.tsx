@@ -32,11 +32,7 @@ export default function LoginPage() {
       login(response.user, response.token);
       toast.success("Đăng nhập thành công!");
 
-      if (response.user.role === "owner") {
-        router.push("/dashboard");
-      } else {
-        router.push("/pos");
-      }
+      router.push("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Đăng nhập thất bại");
     } finally {

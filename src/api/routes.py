@@ -25,3 +25,18 @@ def register_routes(app):
     app.register_blueprint(employee_bp)
     app.register_blueprint(todo_bp)
     app.register_blueprint(category_bp)
+    
+    from src.api.controllers.admin_controller import admin_bp
+    app.register_blueprint(admin_bp)
+    
+    from src.api.controllers.ai_controller import ai_bp
+    app.register_blueprint(ai_bp)
+    
+    from src.api.controllers.report_controller import report_bp
+    app.register_blueprint(report_bp)
+
+    from src.api.controllers.notification_controller import notification_bp
+    app.register_blueprint(notification_bp)
+
+    from src.api.controllers.subscription_controller import subscription_bp
+    app.register_blueprint(subscription_bp)

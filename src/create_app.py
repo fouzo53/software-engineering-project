@@ -17,6 +17,8 @@ from .api.controllers.report_controller import report_bp
 from .api.controllers.customer_controller import customer_bp
 from .api.controllers.employee_controller import employee_bp
 from .api.controllers.admin_controller import admin_bp
+from .api.controllers.category_controller import category_bp
+from .api.controllers.notification_controller import notification_bp
 from .api.health_check import health_bp
 
 
@@ -54,7 +56,12 @@ def create_app(config=Config):
     app.register_blueprint(customer_bp)
     app.register_blueprint(employee_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(category_bp)
+    app.register_blueprint(notification_bp)
     app.register_blueprint(health_bp)
+    
+    from .api.controllers.subscription_controller import subscription_bp
+    app.register_blueprint(subscription_bp)
 
     # Enable dependency injection
     FlaskInjector(app=app, modules=[configure])

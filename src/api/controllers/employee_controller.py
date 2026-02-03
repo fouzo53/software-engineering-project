@@ -80,6 +80,19 @@ def create_employee(employee_service: EmployeeService):
         schema = EmployeeCreateSchema()
         data = schema.load(request.get_json())
         
+        # Check subscription limit
+        from src.infrastructure.models.user_model import UserModel
+        from src.services.subscription_service import SubscriptionService
+        
+        user_id = request.current_user['user_id']
+        user = UserModel.query.get(user_id)
+        
+        current_employees_count = UserModel.query.filter_by(role='employee').count()
+        subscription_service = SubscriptionService()
+        
+        if not subscription_service.check_limit(user, 'employees', current_employees_count):
+            return jsonify({"error": "Đã đạt giới hạn số lượng nhân viên của gói hiện tại. Vui lòng nâng cấp!"}), 403
+
         # Create employee
         result = employee_service.create_employee(
             username=data['username'],

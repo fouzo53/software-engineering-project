@@ -3,6 +3,7 @@ import jwt
 from datetime import datetime, timedelta
 from typing import Optional, Dict
 from injector import inject
+from src.config import Config
 from src.domain.models.user import User
 from src.domain.interfaces.user_repository import IUserRepository
 
@@ -13,7 +14,7 @@ class AuthService:
     @inject
     def __init__(self, user_repository: IUserRepository):
         self.user_repository = user_repository
-        self.secret_key = "your-secret-key-change-in-production"
+        self.secret_key = Config.SECRET_KEY
     
     def register(self, username: str, password: str, full_name: str, role: str = "user") -> Dict:
         """

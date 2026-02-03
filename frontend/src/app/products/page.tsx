@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
-import { productsAPI } from "@/lib/api";
+import { productsAPI, categoriesAPI } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 import { Package, Plus, Search, ArrowLeft, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -59,10 +59,10 @@ export default function ProductsPage() {
     try {
       const [productsRes, categoriesRes] = await Promise.all([
         productsAPI.getAll(),
-        fetch("/api/categories").then((r) => r.json()),
+        categoriesAPI.getAll(),
       ]);
       setProducts(productsRes.data || []);
-      setCategories(categoriesRes.data || categoriesRes.value || []);
+      setCategories(categoriesRes.data || []);
     } catch (error) {
       console.error("Error loading products:", error);
     } finally {
@@ -121,9 +121,6 @@ export default function ProductsPage() {
               </Button>
             </Link>
             <h1 className="text-xl font-bold text-white">Quản lý sản phẩm</h1>
-            <Badge className={isOwner ? "bg-red-500" : "bg-blue-500"}>
-              {isOwner ? "Admin" : "Nhân viên"}
-            </Badge>
           </div>
           {isOwner && (
             <Button
@@ -327,7 +324,7 @@ export default function ProductsPage() {
                         <td className="py-3 px-4 text-right text-amber-400">
                           {formatCurrency(
                             (product.price || product.selling_price) -
-                              (product.cost_price || 0),
+                            (product.cost_price || 0),
                           )}
                         </td>
                       </tr>

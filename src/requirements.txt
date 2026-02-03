@@ -10,3 +10,4 @@ pyjwt
 bcrypt
 google-generativeai
 redis
+openai-whisper

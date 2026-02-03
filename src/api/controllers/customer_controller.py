@@ -1,4 +1,5 @@
 from flask import Blueprint, request, g
+from src.api.middleware import token_required, owner_required, staff_required
 from src.services.customer_service import CustomerService
 from src.api.schemas.customer_schema import (
     CustomerSchema, CustomerCreateSchema, CustomerUpdateSchema,
@@ -11,6 +12,7 @@ customer_bp = Blueprint('customer', __name__)
 
 
 @customer_bp.route('/api/customers', methods=['POST'])
+@token_required
 def create_customer(customer_service: CustomerService):
     """
     Thêm khách hàng mới
@@ -87,6 +89,7 @@ def create_customer(customer_service: CustomerService):
 
 
 @customer_bp.route('/api/customers', methods=['GET'])
+@token_required
 def get_all_customers(customer_service: CustomerService):
     """
     Lấy danh sách khách hàng
@@ -137,6 +140,7 @@ def get_all_customers(customer_service: CustomerService):
 
 
 @customer_bp.route('/api/customers/<int:id>', methods=['GET'])
+@token_required
 def get_customer_by_id(id: int, customer_service: CustomerService):
     """
     Xem chi tiết khách hàng và tổng dư nợ hiện tại
@@ -188,6 +192,7 @@ def get_customer_by_id(id: int, customer_service: CustomerService):
 
 
 @customer_bp.route('/api/customers/<int:id>', methods=['PUT'])
+@owner_required
 def update_customer(id: int, customer_service: CustomerService):
     """
     Cập nhật thông tin khách hàng
@@ -271,6 +276,7 @@ def update_customer(id: int, customer_service: CustomerService):
 
 
 @customer_bp.route('/api/customers/<int:id>/debt-history', methods=['GET'])
+@token_required
 def get_debt_history(id: int, customer_service: CustomerService):
     """
     Xem lịch sử ghi nợ/trả nợ của khách hàng
@@ -325,6 +331,7 @@ def get_debt_history(id: int, customer_service: CustomerService):
 
 
 @customer_bp.route('/api/customers/<int:id>/debt', methods=['POST'])
+@staff_required
 def add_debt(id: int, customer_service: CustomerService):
     """
     Thêm khoản nợ cho khách hàng
@@ -401,6 +408,7 @@ def add_debt(id: int, customer_service: CustomerService):
 
 
 @customer_bp.route('/api/customers/<int:id>/payment', methods=['POST'])
+@token_required
 def add_payment(id: int, customer_service: CustomerService):
     """
     Thêm khoản trả nợ của khách hàng

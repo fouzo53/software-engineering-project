@@ -8,62 +8,59 @@ from src.infrastructure.models.product_model import ProductModel
 from src.infrastructure.models.customer_model import CustomerModel
 from src.infrastructure.models.order_model import OrderModel, OrderDetailModel
 from src.infrastructure.databases.database import db
+from src.infrastructure.databases.database import db
+from injector import inject
 from src.infrastructure.services.stt_service import stt_service
+from src.services.notification_service import NotificationService
 
 
 class AIService:
     """Service sử dụng Google Generative AI (Gemini) để parse text thành order"""
     
-    def __init__(self):
+    @inject
+    def __init__(self, notification_service: NotificationService):
+        self.notification_service = notification_service
         # Configure API key từ .env
         api_key = os.getenv("GOOGLE_API_KEY", "")
         if api_key:
             genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel("gemini-flash-latest")
+        # Dùng model nhẹ, phản hồi nhanh
+        self.model = genai.GenerativeModel("gemini-flash-lite-latest")
     
     def parse_order_text(self, text: str) -> Dict:
         """
         Phân tích câu lệnh bán hàng bằng AI theo chuẩn contract @docs/ai-draft-order-contract.md
         """
         try:
-            # Bước 1: Dùng AI để parse text với prompt chi tiết hơn
+            # Prompt nâng cao để xử lý ngữ nghĩa tiếng Việt tốt hơn
             prompt = f"""
-            Bạn là điều phối viên bán hàng thông minh. Hãy phân tích lệnh sau từ nhân viên:
-            "{text}"
-            
-            Hãy bóc tách thông tin và trả về JSON chuẩn sau:
+            Bạn là chuyên gia bóc tách đơn hàng cho cửa hàng vật liệu xây dựng. 
+            Phân tích câu lệnh bán hàng tiếng Việt sau: "{text}"
+
+            Hãy TRẢ VỀ DUY NHẤT một JSON với format:
             {{
-                "customer": {{
-                    "name": "tên khách",
-                    "confidence": 0.0-1.0
-                }},
+                "customer": {{ "name": "tên khách", "confidence": 0.9 }},
                 "items": [
-                    {{
-                        "product_name": "tên SP",
-                        "quantity": số_lượng,
-                        "unit": "đơn vị (bao/viên/kg...)",
-                        "confidence": 0.0-1.0
-                    }}
+                    {{ "product_name": "tên SP", "quantity": 1, "unit": "đơn vị", "confidence": 0.9 }}
                 ],
-                "payment": {{
-                    "type": "CASH" hoặc "DEBT",
-                    "confidence": 0.0-1.0
-                }},
-                "overall_confidence": 0.0-1.0,
-                "issues": ["mô tả các vấn đề nếu có"],
-                "warnings": ["cảnh báo cho người dùng"]
+                "payment": {{ "type": "CASH/DEBT", "confidence": 0.9 }},
+                "overall_confidence": 0.9,
+                "issues": [], "warnings": []
             }}
-            
-            Quy tắc:
-            - Nếu không rõ khách, name = null.
-            - Nếu có từ "nợ", "ghi sổ", "trả sau" -> payment.type = "DEBT".
-            - Mặc định payment.type = "CASH".
-            - Chỉ trả về JSON nguyên bản.
+
+            QUY TẮC QUAN TRỌNG:
+            1. Tên khách hàng: Trích xuất tên người từ ngữ cảnh "cho [tên]", "bán cho [tên]". Ví dụ: "bán cho anh Chính" -> tên: "Chính". Nếu có chức danh "anh/chị/cô/chú", hãy trích xuất cả tên kèm chức danh nếu có thể.
+            2. Split Items (Quan trọng): Nếu có danh sách SP và "mỗi loại", phải tách thành từng object riêng lẻ trong mảng "items".
+               - Ví dụ: "bán gạch và cát mỗi loại 1 khối" -> [{"product_name": "gạch", "quantity": 1, ...}, {"product_name": "cát", "quantity": 1, ...}]
+            3. Đơn vị tính: Suy luận từ loại hàng (Gạch -> viên, Xi măng -> bao, Cát/Đá -> m3).
+            4. Thanh toán: Chỉ dùng DEBT nếu có từ khóa nợ. Mặc định là CASH.
+            5. Tuyệt đối không gộp nhiều loại SP vào một chuỗi "product_name". Mỗi loại SP là một phần tử trong items.
             """
             
             response = self.model.generate_content(prompt)
             response_text = response.text.strip()
             
+            # Phòng khi model vẫn bao JSON trong ```
             if response_text.startswith("```"):
                 response_text = response_text.split("```")[1]
                 if response_text.startswith("json"):
@@ -77,7 +74,7 @@ class AIService:
             
             for item in parsed.get("items", []):
                 p_name = item.get("product_name", "")
-                qty = item.get("quantity", 0)
+                qty = int(item.get("quantity", 0) or 0)
                 
                 # Tìm product gần đúng
                 product = ProductModel.query.filter(
@@ -91,15 +88,15 @@ class AIService:
                         "name": product.name if product else p_name,
                         "confidence": item.get("confidence", 0.5)
                     },
-                    "quantity": qty,
-                    "unit": item.get("unit", "cái"),
+                    "quantity": qty or 1,
+                    "unit": item.get("unit", "cái") or "cái",
                     "unit_confidence": 0.9,
                     "notes": None
                 }
                 
                 if product:
                     price = product.price or product.selling_price or 0
-                    total_amount += price * qty
+                    total_amount += price * (qty or 1)
                 else:
                     item_node["notes"] = "Không tìm thấy sản phẩm trong kho"
                 
@@ -120,7 +117,8 @@ class AIService:
                 }
             
             # Bước 4: Lưu Draft Order
-            payment_type = parsed.get("payment", {}).get("type", "CASH")
+            payment_type = parsed.get("payment", {}).get("type", "CASH") or "CASH"
+            payment_type = str(payment_type).upper()
             
             draft = DraftOrderModel(
                 text_input=text,
@@ -134,6 +132,12 @@ class AIService:
             
             db.session.add(draft)
             db.session.commit()
+
+            # Đặt đơn nháp status='draft' và lưu
+            db.session.add(draft)
+            db.session.commit()
+            
+            # Không tạo thông báo ở đây, chỉ tạo khi user xác nhận đơn.
             
             # Trả về theo chuẩn Contract
             return {
@@ -182,8 +186,12 @@ class AIService:
             # 2. Parse text thành order
             result = self.parse_order_text(text)
             
-            # Thêm transcript vào kết quả
-            result["transcript"] = text
+            # Thêm transcript vào kết quả với đúng format object
+            result["transcript"] = {
+                "original_text": text,
+                "normalized_text": text,
+                "source": "stt"
+            }
             return result
         except Exception as e:
             return {
@@ -191,12 +199,15 @@ class AIService:
                 "message": f"Lỗi xử lý audio: {str(e)}"
             }
     
-    def confirm_draft_order(self, draft_id: int) -> Dict:
+    def confirm_draft_order(self, draft_id: int, user_id: int) -> Dict:
         """
         Xác nhận chuyển đơn nháp thành đơn thật
         Returns: {"success": bool, "order_id": int, "message": str}
         """
         try:
+            if not user_id:
+                return {"success": False, "message": "User ID is required"}
+
             # Lấy draft order
             draft = DraftOrderModel.query.get(draft_id)
             
@@ -247,10 +258,11 @@ class AIService:
             
             # Tạo Order
             new_order = OrderModel(
+                user_id=user_id,
                 customer_id=draft.customer_id,
-                total=total,
+                total_amount=total,
                 payment_method=draft.payment_method or 'CASH',
-                status='completed'
+                created_at=datetime.now()
             )
             
             db.session.add(new_order)
@@ -282,6 +294,14 @@ class AIService:
             draft.order_id = new_order.id
             
             db.session.commit()
+            
+            # Thông báo khi đơn hàng được xác nhận
+            self.notification_service.create_notification(
+                title="Đơn hàng mới từ AI",
+                message=f"Đơn hàng AI #{new_order.id} đã được xác nhận. Tổng tiền: {int(total):,}đ",
+                type="new_order",
+                user_id=None # Broadcast
+            )
             
             return {
                 "success": True,

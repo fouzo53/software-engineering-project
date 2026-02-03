@@ -14,33 +14,19 @@ import { aiAPI } from "@/lib/api";
 import { toast } from "sonner";
 import { DraftOrderReview } from "./DraftOrderReview";
 
-export function AiOrderDialog() {
+export function AiOrderDialog({ onSuccess }: { onSuccess?: () => void }) {
     const [isRecording, setIsRecording] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [result, setResult] = useState<any>(null);
     const [open, setOpen] = useState(false);
     const [liveTranscript, setLiveTranscript] = useState("");
-    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const [isReviewing, setIsReviewing] = useState(false);
     const recognitionRef = useRef<any>(null);
-    const chunksRef = useRef<Blob[]>([]);
 
     const startRecording = async () => {
         setLiveTranscript("");
+        setIsReviewing(false);
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const mediaRecorder = new MediaRecorder(stream);
-            mediaRecorderRef.current = mediaRecorder;
-            chunksRef.current = [];
-
-            mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunksRef.current.push(e.data);
-            };
-
-            mediaRecorder.onstop = async () => {
-                const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
-                await handleVoiceSubmit(audioBlob);
-            };
-
             // Setup Real-time Recognition (Browser API)
             const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
             if (SpeechRecognition) {
@@ -57,12 +43,16 @@ export function AiOrderDialog() {
                     setLiveTranscript(transcript);
                 };
 
+                recognition.onend = () => {
+                    setIsRecording(false);
+                };
+
                 recognition.start();
                 recognitionRef.current = recognition;
+                setIsRecording(true);
+            } else {
+                toast.error("Trình duyệt không hỗ trợ Web Speech API");
             }
-
-            mediaRecorder.start();
-            setIsRecording(true);
         } catch (err) {
             console.error("Error accessing microphone:", err);
             toast.error("Không thể truy cập micro!");
@@ -70,20 +60,20 @@ export function AiOrderDialog() {
     };
 
     const stopRecording = () => {
-        if (mediaRecorderRef.current && isRecording) {
-            mediaRecorderRef.current.stop();
-            mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
-            setIsRecording(false);
-        }
         if (recognitionRef.current) {
             recognitionRef.current.stop();
         }
+        // Sau khi dừng, chuyển sang chế độ review nếu có transcript
+        setIsRecording(false);
+        if (liveTranscript.trim()) {
+            setIsReviewing(true);
+        }
     };
 
-    const handleVoiceSubmit = async (blob: Blob) => {
+    const handleVoiceSubmit = async (text: string) => {
         setIsProcessing(true);
         try {
-            const data = await aiAPI.parseVoiceOrder(blob);
+            const data = await aiAPI.parseOrder(text);
             setResult(data);
         } catch (error: any) {
             toast.error(error.message || "Lỗi xử lý giọng nói");
@@ -97,12 +87,38 @@ export function AiOrderDialog() {
         setIsRecording(false);
         setIsProcessing(false);
         setLiveTranscript("");
+        setIsReviewing(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={(val) => {
+            // Nếu người dùng đóng dialog trong khi còn đang ghi âm hoặc đang review,
+            // thì hủy bỏ mọi phiên nhận diện âm thanh, xóa đoạn transcript và không gửi lệnh.
+            if (!val) {
+                if (recognitionRef.current) {
+                    try {
+                        // Ngắt các handler để tránh onend/onresult kích hoạt sau khi đóng
+                        recognitionRef.current.onresult = null;
+                        recognitionRef.current.onend = null;
+                        if (typeof recognitionRef.current.abort === 'function') {
+                            recognitionRef.current.abort();
+                        } else if (typeof recognitionRef.current.stop === 'function') {
+                            recognitionRef.current.stop();
+                        }
+                    } catch (e) {
+                        console.warn('Failed to stop recognition:', e);
+                    } finally {
+                        recognitionRef.current = null;
+                    }
+                }
+
+                // Xóa mọi trạng thái (bao gồm liveTranscript và chế độ review)
+                reset();
+                setOpen(false);
+                return;
+            }
+
             setOpen(val);
-            if (!val) reset();
         }}>
             <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600">
@@ -138,14 +154,46 @@ export function AiOrderDialog() {
 
                             <div className="text-center w-full px-6">
                                 <p className="text-lg font-medium mb-3">
-                                    {isRecording ? "Đang lắng nghe..." : "Nhấn vào micro để nói"}
+                                    {isRecording
+                                        ? "Đang lắng nghe..."
+                                        : isReviewing
+                                            ? "Kiểm tra lại câu lệnh trước khi gửi"
+                                            : "Nhấn vào micro để nói"}
                                 </p>
 
-                                {isRecording && liveTranscript && (
+                                {(isRecording || isReviewing) && liveTranscript && (
                                     <div className="bg-white/5 border border-pink-500/20 p-4 rounded-xl mb-4 animate-in fade-in slide-in-from-bottom-2">
                                         <p className="text-pink-400 text-sm italic">
                                             "{liveTranscript}"
                                         </p>
+                                    </div>
+                                )}
+
+                                {isReviewing && liveTranscript && (
+                                    <div className="flex items-center justify-center gap-3 mt-2">
+                                        <Button
+                                            size="sm"
+                                            className="bg-emerald-500 hover:bg-emerald-600"
+                                            onClick={() => {
+                                                handleVoiceSubmit(liveTranscript);
+                                                setIsReviewing(false);
+                                            }}
+                                            disabled={isProcessing}
+                                        >
+                                            Gửi lệnh này
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="border-white/20 text-slate-200"
+                                            onClick={() => {
+                                                setLiveTranscript("");
+                                                setIsReviewing(false);
+                                            }}
+                                            disabled={isProcessing}
+                                        >
+                                            Ghi lại
+                                        </Button>
                                     </div>
                                 )}
 
@@ -168,6 +216,7 @@ export function AiOrderDialog() {
                             onConfirm={() => {
                                 setOpen(false);
                                 reset();
+                                if (onSuccess) onSuccess();
                             }}
                         />
                     )}

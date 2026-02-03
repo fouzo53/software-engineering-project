@@ -23,7 +23,8 @@ import { AiOrderDialog } from "@/components/ai/AiOrderDialog";
 interface Product {
   id: number;
   name: string;
-  selling_price: number;
+  price: number;
+  selling_price?: number;
   stock: number;
   unit: string;
 }
@@ -98,7 +99,7 @@ export default function POSPage() {
         {
           product_id: product.id,
           name: product.name,
-          price: product.selling_price,
+          price: product.price || product.selling_price || 0,
           quantity: 1,
           unit: product.unit,
         },
@@ -124,6 +125,27 @@ export default function POSPage() {
           return item;
         })
         .filter((item) => item.quantity > 0),
+    );
+  };
+
+  const setQuantity = (productId: number, quantity: number) => {
+    if (quantity < 0) return;
+    const product = products.find((p) => p.id === productId);
+
+    if (quantity === 0) {
+      removeFromCart(productId);
+      return;
+    }
+
+    if (product && quantity > product.stock) {
+      toast.error(`Chỉ còn ${product.stock} sản phẩm trong kho`);
+      quantity = product.stock;
+    }
+
+    setCart(
+      cart.map((item) =>
+        item.product_id === productId ? { ...item, quantity } : item
+      )
     );
   };
 
@@ -191,15 +213,6 @@ export default function POSPage() {
               </Button>
             </Link>
             <h1 className="text-xl font-bold text-white">Bán hàng</h1>
-            <Badge
-              className={
-                isOwner
-                  ? "bg-red-500 hover:bg-red-600"
-                  : "bg-blue-500 hover:bg-blue-600"
-              }
-            >
-              {isOwner ? "Admin" : "Nhân viên"}
-            </Badge>
           </div>
           <AiOrderDialog />
         </div>
@@ -240,7 +253,7 @@ export default function POSPage() {
                           </Badge>
                         </div>
                         <p className="text-emerald-400 font-bold">
-                          {formatCurrency(product.selling_price)}
+                          {formatCurrency(product.price || product.selling_price || 0)}
                         </p>
                       </div>
                     ))}
@@ -314,9 +327,16 @@ export default function POSPage() {
                             >
                               <Minus className="w-3 h-3" />
                             </button>
-                            <span className="text-white w-8 text-center">
-                              {item.quantity}
-                            </span>
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.quantity}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value);
+                                if (!isNaN(val)) setQuantity(item.product_id, val);
+                              }}
+                              className="w-12 h-7 bg-white/10 text-white text-center rounded border border-white/20 text-sm focus:outline-none focus:border-emerald-500"
+                            />
                             <button
                               onClick={() => updateQuantity(item.product_id, 1)}
                               className="w-7 h-7 rounded bg-white/10 flex items-center justify-center text-white hover:bg-white/20"
@@ -338,8 +358,8 @@ export default function POSPage() {
                   <button
                     onClick={() => setPaymentMethod("CASH")}
                     className={`flex-1 py-2 rounded-lg border transition-all ${paymentMethod === "CASH"
-                        ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
-                        : "bg-white/5 border-white/20 text-white"
+                      ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
+                      : "bg-white/5 border-white/20 text-white"
                       }`}
                   >
                     Tiền mặt
@@ -347,8 +367,8 @@ export default function POSPage() {
                   <button
                     onClick={() => setPaymentMethod("DEBT")}
                     className={`flex-1 py-2 rounded-lg border transition-all ${paymentMethod === "DEBT"
-                        ? "bg-amber-500/20 border-amber-500 text-amber-400"
-                        : "bg-white/5 border-white/20 text-white"
+                      ? "bg-amber-500/20 border-amber-500 text-amber-400"
+                      : "bg-white/5 border-white/20 text-white"
                       }`}
                   >
                     Ghi nợ

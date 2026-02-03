@@ -9,12 +9,17 @@ from src.infrastructure.models.product_model import ProductModel
 from src.infrastructure.databases.database import db
 
 
+from src.services.notification_service import NotificationService
+from src.services.bookkeeping_service import BookkeepingService
+
 class OrderService:
     """Service xử lý logic nghiệp vụ cho Order"""
     
     @inject
-    def __init__(self, product_repository: IProductRepository):
+    def __init__(self, product_repository: IProductRepository, notification_service: NotificationService, bookkeeping_service: BookkeepingService):
         self.product_repository = product_repository
+        self.notification_service = notification_service
+        self.bookkeeping_service = bookkeeping_service
     
     def create_order(self, user_id: int, items: List[Dict], customer_id: int = None, payment_method: str = 'CASH') -> Dict:
         """
@@ -89,6 +94,28 @@ class OrderService:
             # Commit transaction
             db.session.commit()
             
+            # 3. Ghi sổ kế toán tự động (S1, S2, S6, S7)
+            try:
+                self.bookkeeping_service.record_sale(
+                    order_id=order_model.id,
+                    total_amount=total_amount,
+                    items=order_details,
+                    payment_method=payment_method
+                )
+            except Exception as bk_error:
+                print(f"Failed to record bookkeeping: {bk_error}")
+
+            # Create notification (Async ideal, but sync for now)
+            try:
+                self.notification_service.create_notification(
+                    title="Đơn hàng mới",
+                    message=f"Đơn hàng #{order_model.id} đã được tạo thành công. Tổng tiền: {order_model.total_amount:,.0f}đ",
+                    user_id=user_id,
+                    type="new_order"
+                )
+            except Exception as notify_error:
+                print(f"Failed to send notification: {notify_error}")
+            
             return {
                 "success": True,
                 "message": "Order created successfully",
@@ -111,6 +138,49 @@ class OrderService:
             return {
                 "success": False,
                 "message": f"Failed to create order: {str(e)}"
+            }
+    
+    def get_orders(self, page: int = 1, per_page: int = 10) -> Dict:
+        """
+        Lấy danh sách đơn hàng phân trang
+        """
+        try:
+            pagination = OrderModel.query.order_by(OrderModel.created_at.desc()).paginate(
+                page=page, per_page=per_page, error_out=False
+            )
+            
+            orders = []
+            for order in pagination.items:
+                # Get customer name
+                from src.infrastructure.models.customer_model import CustomerModel
+                customer = CustomerModel.query.get(order.customer_id) if order.customer_id else None
+                customer_name = customer.name if customer else "Khách lẻ"
+                
+                # Get user name
+                user = UserModel.query.get(order.user_id)
+                user_name = user.full_name if user else "Unknown"
+
+                orders.append({
+                    "id": order.id,
+                    "customer_name": customer_name,
+                    "created_by": user_name,
+                    "total_amount": order.total_amount,
+                    "payment_method": order.payment_method,
+                    "created_at": order.created_at.isoformat() if order.created_at else None
+                })
+            
+            return {
+                "success": True,
+                "orders": orders,
+                "total": pagination.total,
+                "pages": pagination.pages,
+                "current_page": page
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "message": str(e),
+                "orders": []
             }
     
     def get_order_print_html(self, order_id: int) -> Dict:
@@ -318,10 +388,11 @@ class OrderService:
                 
                 <div class="order-info">
                     <div>
-                        <p><span class="label">Cửa hàng:</span> <span class="value">{shop_name}</span></p>
+                        <p><span class="label">Người mua:</span> <span class="value">{order.customer.name if order.customer else 'Khách lẻ'}</span></p>
                         <p><span class="label">Ngày:</span> <span class="value">{order_date}</span></p>
                     </div>
                     <div>
+                        <p><span class="label">Cửa hàng:</span> <span class="value">{shop_name}</span></p>
                         <p><span class="label">Mã đơn hàng:</span> <span class="value">{order.id}</span></p>
                     </div>
                 </div>

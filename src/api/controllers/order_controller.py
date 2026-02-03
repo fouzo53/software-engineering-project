@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, g
+from src.api.middleware import token_required
 from marshmallow import ValidationError
 from src.api.schemas.order_schema import CreateOrderSchema
 from src.services.order_service import OrderService
@@ -7,6 +8,7 @@ order_bp = Blueprint('order', __name__, url_prefix='/api/orders')
 
 
 @order_bp.route('', methods=['POST'])
+@token_required
 def create_order(order_service: OrderService):
     """
     Tạo đơn hàng mới
@@ -84,8 +86,23 @@ def create_order(order_service: OrderService):
         data = schema.load(json_data)
         
         # Get user_id từ JWT token
-        user_id = g.user.get('user_id')
+        user_id = request.current_user.get('user_id')
+
+        # Check subscription limit
+        from src.infrastructure.models.user_model import UserModel
+        from src.infrastructure.models.order_model import OrderModel
+        from src.services.subscription_service import SubscriptionService
+        from datetime import datetime, timedelta
         
+        user = UserModel.query.get(user_id)
+        # Assuming current month orders
+        first_day_of_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        current_month_orders = OrderModel.query.filter(OrderModel.created_at >= first_day_of_month).count()
+        
+        subscription_service = SubscriptionService()
+        if not subscription_service.check_limit(user, 'orders_per_month', current_month_orders):
+            return jsonify({"error": "Đã đạt giới hạn số lượng đơn hàng trong tháng. Vui lòng nâng cấp gói dịch vụ!"}), 403
+
         # Create order
         result = order_service.create_order(
             user_id=user_id, 
@@ -105,11 +122,43 @@ def create_order(order_service: OrderService):
         print(f"[DEBUG] Validation error: {e.messages}")
         return jsonify({"error": e.messages}), 400
     except Exception as e:
-        print(f"[DEBUG] Exception: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
+@order_bp.route('', methods=['GET'])
+@token_required
+def get_orders(order_service: OrderService):
+    """
+    Lấy danh sách đơn hàng
+    ---
+    tags:
+      - Order
+    parameters:
+      - in: query
+        name: page
+        type: integer
+        default: 1
+      - in: query
+        name: per_page
+        type: integer
+        default: 10
+    responses:
+      200:
+        description: Danh sách đơn hàng
+    """
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    
+    result = order_service.get_orders(page, per_page)
+    
+    if result['success']:
+        return jsonify(result), 200
+    else:
+        return jsonify({"error": result['message']}), 500
+
+
 @order_bp.route('/<int:id>/print', methods=['GET'])
+@token_required
 def print_order(id: int, order_service: OrderService):
     """
     Lấy mẫu in hóa đơn
