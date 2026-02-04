@@ -132,8 +132,12 @@ def main():
     
     with app.app_context():
         print("\n🗑️  Reset database...")
-        db.drop_all()
-        db.create_all()
+        with db.engine.connect() as connection:
+            connection.execute(db.text("SET FOREIGN_KEY_CHECKS = 0;"))
+            db.metadata.drop_all(bind=connection)
+            db.metadata.create_all(bind=connection)
+            connection.execute(db.text("SET FOREIGN_KEY_CHECKS = 1;"))
+            connection.commit()
         print("   ✓ Database đã được reset")
         
         print("\n👤 Tạo tài khoản...")
