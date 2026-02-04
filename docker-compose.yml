@@ -29,20 +29,5 @@ services:
     ports:
       - "8080:80"
 
-  backend:
-    build: .
-    container_name: bizflow_backend
-    depends_on:
-      - mysql
-      - redis
-    env_file:
-      - .env
-    environment:
-      - DATABASE_URI=mysql+pymysql://root:${MYSQL_ROOT_PASSWORD:-root}@mysql:3306/bizflow_db
-    ports:
-      - "6868:6868"
-    volumes:
-      - .:/app
-
 volumes:
   mysql_data:
