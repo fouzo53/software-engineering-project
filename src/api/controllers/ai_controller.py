@@ -208,7 +208,7 @@ def parse_voice_order(ai_service: AIService):
             return jsonify({"error": "File âm thanh không hợp lệ"}), 400
         
         # Lưu tạm file để xử lý
-        upload_folder = 'uploads/temp'
+        upload_folder = 'src/uploads/temp'
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
             

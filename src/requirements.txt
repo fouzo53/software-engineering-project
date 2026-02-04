@@ -1,0 +1,16 @@
+flask
+flask-sqlalchemy
+flask-cors
+flasgger
+injector
+flask-injector
+marshmallow
+bcrypt
+PyJWT
+python-dotenv
+PyMySQL
+google-generativeai
+openai-whisper
+faker
+requests
+gunicorn
