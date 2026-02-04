@@ -2,8 +2,8 @@
     "template": {
         "swagger": "2.0",
         "info": {
-            "title": "Todo API",
-            "description": "API for managing todos",
+            "title": "BizFlow API",
+            "description": "API for BizFlow Clean Architecture",
             "version": "1.0.0"
         },
         "basePath": "/",
@@ -16,6 +16,19 @@
         ],
         "produces": [
             "application/json"
+        ],
+        "securityDefinitions": {
+            "Bearer": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header",
+                "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+            }
+        },
+        "security": [
+            {
+                "Bearer": []
+            }
         ]
     },
     "swagger_config": {

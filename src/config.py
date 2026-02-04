@@ -67,6 +67,15 @@ template = {
     "schemes": ["http", "https"],
     "consumes": ["application/json"],
     "produces": ["application/json"],
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        }
+    },
+    "security": [{"Bearer": []}],
 }
 
 
@@ -84,6 +93,15 @@ class SwaggerConfig:
         "schemes": ["http", "https"],
         "consumes": ["application/json"],
         "produces": ["application/json"],
+        "securityDefinitions": {
+            "Bearer": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header",
+                "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+            }
+        },
+        "security": [{"Bearer": []}],
     }
 
     swagger_config = {
