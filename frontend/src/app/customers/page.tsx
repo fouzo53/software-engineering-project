@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { customersAPI } from "@/lib/api";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatPhone } from "@/lib/utils";
 import { Users, Plus, Search, ArrowLeft, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -252,7 +252,7 @@ export default function CustomersPage() {
                         <h3 className="font-medium text-white text-lg">
                           {customer.name}
                         </h3>
-                        <p className="text-violet-300">{customer.phone}</p>
+                        <p className="text-violet-300">{formatPhone(customer.phone)}</p>
                         <p className="text-violet-400 text-sm">
                           {customer.address}
                         </p>
@@ -262,8 +262,8 @@ export default function CustomersPage() {
                           <p className="text-sm text-violet-300">Công nợ</p>
                           <p
                             className={`text-xl font-bold ${customer.debt_amount > 0
-                                ? "text-amber-400"
-                                : "text-emerald-400"
+                              ? "text-amber-400"
+                              : "text-emerald-400"
                               }`}
                           >
                             {formatCurrency(customer.debt_amount || 0)}

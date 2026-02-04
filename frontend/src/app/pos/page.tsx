@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { productsAPI, customersAPI, ordersAPI } from "@/lib/api";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatPhone } from "@/lib/utils";
 import {
   ShoppingCart,
   Plus,
@@ -288,7 +288,7 @@ export default function POSPage() {
                     <option value="">Chọn khách hàng</option>
                     {customers.map((c) => (
                       <option key={c.id} value={c.id} className="text-black">
-                        {c.name} - {c.phone}
+                        {c.name} - {formatPhone(c.phone)}
                       </option>
                     ))}
                   </select>

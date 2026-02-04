@@ -20,12 +20,7 @@ def get_all_owners(admin_service: AdminService):
       - Admin
     security:
       - Bearer: []
-    parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Admin)
+
     responses:
       200:
         description: Danh sách chủ hộ kinh doanh
@@ -75,11 +70,7 @@ def update_owner_subscription(id: int, admin_service: AdminService):
     security:
       - Bearer: []
     parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Admin)
+
       - in: path
         name: id
         type: integer
@@ -141,12 +132,7 @@ def get_platform_stats(admin_service: AdminService):
       - Admin
     security:
       - Bearer: []
-    parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Admin)
+
     responses:
       200:
         description: Thống kê toàn sàn
@@ -188,12 +174,7 @@ def update_report_config(admin_service: AdminService):
       - Admin
     security:
       - Bearer: []
-    parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Admin)
+
       - in: body
         name: body
         required: true
@@ -272,12 +253,7 @@ def get_report_config(admin_service: AdminService):
       - Admin
     security:
       - Bearer: []
-    parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Admin)
+
     responses:
       200:
         description: Cấu hình báo cáo hiện tại

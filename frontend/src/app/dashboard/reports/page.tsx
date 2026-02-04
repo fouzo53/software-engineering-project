@@ -56,7 +56,7 @@ export default function ReportsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:hidden">
                 <div>
                     <Link href="/dashboard">
                         <Button variant="ghost" className="text-white hover:bg-white/10 mb-2 pl-0">
@@ -75,17 +75,17 @@ export default function ReportsPage() {
 
                 <div className="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/10">
                     <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-slate-400" />
+                        <Calendar className="w-4 h-4 text-white" />
                         <Input
                             type="date"
-                            className="bg-transparent border-0 text-white w-32 p-0 focus-visible:ring-0"
+                            className="bg-transparent border-0 text-white w-32 p-0 focus-visible:ring-0 [color-scheme:dark]"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
                         />
                         <span className="text-slate-400">-</span>
                         <Input
                             type="date"
-                            className="bg-transparent border-0 text-white w-32 p-0 focus-visible:ring-0"
+                            className="bg-transparent border-0 text-white w-32 p-0 focus-visible:ring-0 [color-scheme:dark]"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
                         />
@@ -94,7 +94,7 @@ export default function ReportsPage() {
             </div>
 
             <Tabs defaultValue="s1" className="w-full">
-                <TabsList className="bg-white/5 border border-white/10 w-full justify-start">
+                <TabsList className="bg-white/5 border border-white/10 w-full justify-start print:hidden">
                     <TabsTrigger value="s1" className="data-[state=active]:bg-yellow-500 data-[state=active]:text-black">
                         Mẫu S1-HKD: Doanh thu
                     </TabsTrigger>
@@ -105,9 +105,9 @@ export default function ReportsPage() {
 
                 {/* --- S1-HKD: Sổ chi tiết doanh thu --- */}
                 <TabsContent value="s1">
-                    <Card className="bg-white border-none shadow-lg text-black overflow-hidden relative">
+                    <Card className="bg-white border-none shadow-lg text-black overflow-hidden relative print:overflow-visible print:shadow-none">
                         <div className="absolute top-4 right-4 print:hidden">
-                            <Button variant="outline" size="sm" onClick={printReport} className="flex gap-2">
+                            <Button variant="outline" size="sm" onClick={printReport} className="flex gap-2 text-white hover:text-white border-white/20 bg-black/50 hover:bg-black/70">
                                 <Printer className="w-4 h-4" /> In sổ
                             </Button>
                         </div>
@@ -122,7 +122,7 @@ export default function ReportsPage() {
                                 Từ ngày {new Date(startDate).toLocaleDateString('vi-VN')} đến ngày {new Date(endDate).toLocaleDateString('vi-VN')}
                             </p>
                         </CardHeader>
-                        <CardContent className="p-0 overflow-x-auto">
+                        <CardContent className="p-0 overflow-x-auto print:overflow-visible">
                             <table className="w-full border-collapse text-sm">
                                 <thead>
                                     <tr className="bg-gray-100 text-gray-700">
@@ -191,9 +191,9 @@ export default function ReportsPage() {
 
                 {/* --- S4-HKD: Sổ quỹ tiền mặt --- */}
                 <TabsContent value="s4">
-                    <Card className="bg-white border-none shadow-lg text-black overflow-hidden relative">
+                    <Card className="bg-white border-none shadow-lg text-black overflow-hidden relative print:overflow-visible print:shadow-none">
                         <div className="absolute top-4 right-4 print:hidden">
-                            <Button variant="outline" size="sm" onClick={printReport} className="flex gap-2">
+                            <Button variant="outline" size="sm" onClick={printReport} className="flex gap-2 text-white hover:text-white border-white/20 bg-black/50 hover:bg-black/70">
                                 <Printer className="w-4 h-4" /> In sổ
                             </Button>
                         </div>
@@ -204,8 +204,11 @@ export default function ReportsPage() {
                             <p className="text-sm text-gray-600">
                                 (Ban hành kèm theo Thông tư số 88/2021/TT-BTC ngày 11/10/2021 của Bộ Tài chính)
                             </p>
+                            <p className="text-sm italic mt-2">
+                                Từ ngày {new Date(startDate).toLocaleDateString('vi-VN')} đến ngày {new Date(endDate).toLocaleDateString('vi-VN')}
+                            </p>
                         </CardHeader>
-                        <CardContent className="p-0 overflow-x-auto">
+                        <CardContent className="p-0 overflow-x-auto print:overflow-visible">
                             <table className="w-full border-collapse text-sm">
                                 <thead>
                                     <tr className="bg-gray-100 text-gray-700">

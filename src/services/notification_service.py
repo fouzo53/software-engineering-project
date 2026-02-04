@@ -29,7 +29,11 @@ class NotificationService:
         return [n.to_dict() for n in notifications]
 
     def mark_read(self, notification_id: int, user_id: int) -> Dict:
-        notification = Notification.query.filter_by(id=notification_id, user_id=user_id).first()
+        from sqlalchemy import or_
+        notification = Notification.query.filter(
+            Notification.id == notification_id,
+            or_(Notification.user_id == user_id, Notification.user_id == None)
+        ).first()
         
         if not notification:
             return {"success": False, "message": "Notification not found"}
@@ -39,7 +43,11 @@ class NotificationService:
         return {"success": True}
         
     def mark_all_read(self, user_id: int) -> Dict:
-        notifications = Notification.query.filter_by(user_id=user_id, is_read=False).all()
+        from sqlalchemy import or_
+        notifications = Notification.query.filter(
+            or_(Notification.user_id == user_id, Notification.user_id == None),
+            Notification.is_read == False
+        ).all()
         for n in notifications:
             n.is_read = True
         db.session.commit()

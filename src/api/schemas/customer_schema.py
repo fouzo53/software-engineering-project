@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, pre_load, post_dump
 
 
 class CustomerSchema(Schema):
@@ -10,6 +10,14 @@ class CustomerSchema(Schema):
     debt_amount = fields.Float(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
 
+    @post_dump
+    def format_phone_param(self, data, **kwargs):
+        if 'phone' in data and data['phone']:
+            phone = str(data['phone'])
+            if phone.startswith('0'):
+                data['phone'] = '+84' + phone[1:]
+        return data
+
 
 class CustomerCreateSchema(Schema):
     """Schema cho tạo Customer mới"""
@@ -17,12 +25,28 @@ class CustomerCreateSchema(Schema):
     phone = fields.Str(required=True, validate=validate.Length(min=10, max=20))
     address = fields.Str(required=True, validate=validate.Length(min=1, max=255))
 
+    @pre_load
+    def format_phone(self, data, **kwargs):
+        if 'phone' in data and data['phone']:
+            phone = str(data['phone']).strip()
+            if phone.startswith('0'):
+                data['phone'] = '+84' + phone[1:]
+        return data
+
 
 class CustomerUpdateSchema(Schema):
     """Schema cho cập nhật Customer"""
     name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     phone = fields.Str(required=True, validate=validate.Length(min=10, max=20))
     address = fields.Str(required=True, validate=validate.Length(min=1, max=255))
+
+    @pre_load
+    def format_phone(self, data, **kwargs):
+        if 'phone' in data and data['phone']:
+            phone = str(data['phone']).strip()
+            if phone.startswith('0'):
+                data['phone'] = '+84' + phone[1:]
+        return data
 
 
 class DebtTransactionSchema(Schema):

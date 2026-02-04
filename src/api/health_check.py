@@ -6,6 +6,7 @@ Used for load balancers and uptime monitoring
 from flask import Blueprint, jsonify
 from datetime import datetime
 from src.infrastructure.databases.database import db
+from sqlalchemy import text
 
 health_bp = Blueprint('health', __name__, url_prefix='/api/health')
 
@@ -44,7 +45,7 @@ def health_check():
     """
     try:
         # Check database connection
-        db.session.execute('SELECT 1')
+        db.session.execute(text('SELECT 1'))
         db_status = 'connected'
     except Exception as e:
         db_status = 'disconnected'
@@ -80,7 +81,7 @@ def readiness_check():
         description: Ứng dụng chưa sẵn sàng
     """
     try:
-        db.session.execute('SELECT 1')
+        db.session.execute(text('SELECT 1'))
         return jsonify({'ready': True}), 200
     except Exception:
         return jsonify({'ready': False}), 503

@@ -28,7 +28,7 @@ def login(auth_service: AuthService):
               example: "admin"
             password:
               type: string
-              example: "password123"
+              example: "123456"
     responses:
       200:
         description: Đăng nhập thành công
@@ -78,10 +78,12 @@ def login(auth_service: AuthService):
 @auth_bp.route('/register', methods=['POST'])
 def register(auth_service: AuthService):
     """
-    Đăng ký tài khoản mới
+    Đăng ký tài khoản mới (Admin hoặc Owner)
     ---
     tags:
       - Auth
+    security:
+      - Bearer: []
     parameters:
       - in: body
         name: body
@@ -98,7 +100,7 @@ def register(auth_service: AuthService):
               example: "newuser"
             password:
               type: string
-              example: "password123"
+              example: "123456"
             full_name:
               type: string
               example: "Nguyen Van A"

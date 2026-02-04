@@ -19,6 +19,8 @@ def create_customer(customer_service: CustomerService):
     ---
     tags:
       - Customer
+    security:
+      - Bearer: []
     parameters:
       - in: body
         name: body
@@ -96,6 +98,8 @@ def get_all_customers(customer_service: CustomerService):
     ---
     tags:
       - Customer
+    security:
+      - Bearer: []
     parameters:
       - in: query
         name: search
@@ -147,6 +151,8 @@ def get_customer_by_id(id: int, customer_service: CustomerService):
     ---
     tags:
       - Customer
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: id
@@ -199,6 +205,8 @@ def update_customer(id: int, customer_service: CustomerService):
     ---
     tags:
       - Customer
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: id
@@ -283,6 +291,8 @@ def get_debt_history(id: int, customer_service: CustomerService):
     ---
     tags:
       - Customer
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: id
@@ -338,6 +348,8 @@ def add_debt(id: int, customer_service: CustomerService):
     ---
     tags:
       - Customer
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: id
@@ -415,6 +427,8 @@ def add_payment(id: int, customer_service: CustomerService):
     ---
     tags:
       - Customer
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: id

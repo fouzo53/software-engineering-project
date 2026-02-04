@@ -18,11 +18,6 @@ def create_order(order_service: OrderService):
     security:
       - Bearer: []
     parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token
       - in: body
         name: body
         required: true
@@ -30,7 +25,17 @@ def create_order(order_service: OrderService):
           type: object
           required:
             - items
+            - customer_id
           properties:
+            customer_id:
+              type: integer
+              description: ID của khách hàng
+              example: 1
+            payment_method:
+              type: string
+              description: Phương thức thanh toán (CASH/DEBT)
+              example: CASH
+              default: CASH
             items:
               type: array
               items:
@@ -133,6 +138,8 @@ def get_orders(order_service: OrderService):
     ---
     tags:
       - Order
+    security:
+      - Bearer: []
     parameters:
       - in: query
         name: page
@@ -165,6 +172,8 @@ def print_order(id: int, order_service: OrderService):
     ---
     tags:
       - Order
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: id

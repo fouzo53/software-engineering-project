@@ -12,5 +12,5 @@ class CreateOrderSchema(Schema):
     """Schema để validate input khi tạo order"""
     items = fields.List(fields.Nested(OrderItemSchema), required=True, validate=validate.Length(min=1))
     customer_id = fields.Int(required=True)
-    payment_method = fields.Str(validate=validate.OneOf(['CASH', 'DEBT']), load_default='CASH')
+    payment_method = fields.Str(validate=validate.OneOf(['CASH', 'DEBT', 'TRANSFER', 'BANK', 'QR_CODE']), load_default='CASH')
     total_amount = fields.Float(load_default=None)  # Optional, will be calculated

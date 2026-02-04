@@ -84,6 +84,14 @@ class SwaggerConfig:
         "schemes": ["http", "https"],
         "consumes": ["application/json"],
         "produces": ["application/json"],
+        "securityDefinitions": {
+            "Bearer": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header",
+                "description": 'Nhập JWT token của bạn. Hệ thống hỗ trợ cả việc dán trực tiếp token hoặc định dạng "Bearer {token}"',
+            }
+        },
     }
 
     swagger_config = {

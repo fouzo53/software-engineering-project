@@ -16,6 +16,8 @@ def parse_order(ai_service: AIService):
     ---
     tags:
       - AI
+    security:
+      - Bearer: []
     parameters:
       - in: body
         name: body
@@ -135,6 +137,8 @@ def confirm_draft(draft_id: int, ai_service: AIService):
     ---
     tags:
       - AI
+    security:
+      - Bearer: []
     parameters:
       - in: path
         name: draft_id
@@ -230,56 +234,3 @@ def parse_voice_order(ai_service: AIService):
     except Exception as e:
         return jsonify({"error": f"Lỗi: {str(e)}"}), 500
 
-
-@ai_bp.route('/draft', methods=['POST'])
-@staff_required
-def draft_order(ai_service: AIService):
-    """
-    Phân tích văn bản thành đơn nháp bằng AI (Legacy endpoint)
-    ---
-    tags:
-      - AI
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - text
-          properties:
-            text:
-              type: string
-              example: "Tôi muốn mua 2 cái áo và 3 cái quần"
-    responses:
-      200:
-        description: Phân tích đơn nháp thành công
-        schema:
-          type: object
-          properties:
-            success:
-              type: boolean
-            items:
-              type: array
-              items:
-                type: object
-                properties:
-                  product_name:
-                    type: string
-                  quantity:
-                    type: integer
-      400:
-        description: Không thể phân tích văn bản
-    """
-    data = request.get_json()
-    text = data.get('text', '')
-    
-    if not text:
-        return jsonify({"error": "Text is required"}), 400
-    
-    result = ai_service.parse_text_to_order(text)
-    
-    if result['success']:
-        return jsonify(result), 200
-    else:
-        return jsonify({"error": result.get('message', 'Failed to parse text')}), 400

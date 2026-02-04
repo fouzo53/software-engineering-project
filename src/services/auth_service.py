@@ -53,15 +53,15 @@ class AuthService:
         # Tìm user
         user = self.user_repository.get_by_username(username)
         if not user:
-            return {"success": False, "message": "Invalid username or password"}
+            return {"success": False, "message": "Incorrect username"}
         
         # Check if account is active
         if getattr(user, 'status', 'active') == 'inactive':
-            return {"success": False, "message": "Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ Admin!"}
+            return {"success": False, "message": "Account is inactive. Please contact Admin!"}
         
         # Verify password
         if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
-            return {"success": False, "message": "Invalid username or password"}
+            return {"success": False, "message": "Incorrect password"}
         
         # Tạo JWT token
         payload = {

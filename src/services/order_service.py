@@ -153,8 +153,16 @@ class OrderService:
             for order in pagination.items:
                 # Get customer name
                 from src.infrastructure.models.customer_model import CustomerModel
+                from src.infrastructure.models.draft_order_model import DraftOrderModel
+                
                 customer = CustomerModel.query.get(order.customer_id) if order.customer_id else None
-                customer_name = customer.name if customer else "Khách lẻ"
+                
+                if customer:
+                    customer_name = customer.name
+                else:
+                    # Nếu không có customer_id, thử tìm trong DraftOrder (đơn tạo từ AI)
+                    draft_order = DraftOrderModel.query.filter_by(order_id=order.id).first()
+                    customer_name = draft_order.customer_name if (draft_order and draft_order.customer_name) else "Khách lẻ"
                 
                 # Get user name
                 user = UserModel.query.get(order.user_id)

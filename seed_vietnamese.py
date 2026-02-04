@@ -146,13 +146,13 @@ def main():
         owner = UserModel(
             username="owner",
             password_hash=hash_password("123456"),
-            full_name="Nguyễn Văn A",
+            full_name="Lê Hà Quốc Huy",
             role="owner",
             status="active",
             subscription="pro"
         )
         db.session.add(owner)
-        print("   ✓ Owner: owner / 123456 (Nguyễn Văn A)")
+        print("   ✓ Owner: owner / 123456 (Lê Hà Quốc Huy)")
 
         # Admin (Quản trị hệ thống)
         admin = UserModel(
@@ -232,10 +232,28 @@ def main():
         print("\n👥 Tạo khách hàng...")
         
         customers = []
+        used_phones = set()
+        
         for i in range(20):
+            # Generate valid VN mobile phone
+            # Formats: 09xxxxxxxx, 03xxxxxxxx, 07xxxxxxxx, 08xxxxxxxx, 05xxxxxxxx
+            prefixes = ["09", "03", "07", "08", "05"]
+            
+            while True:
+                prefix = random.choice(prefixes)
+                suffix = "".join([str(random.randint(0, 9)) for _ in range(8)])
+                raw_phone = prefix + suffix
+                
+                # Format to +84
+                phone = "+84" + raw_phone[1:]
+                
+                if phone not in used_phones:
+                    used_phones.add(phone)
+                    break
+            
             customer = CustomerModel(
                 name=fake.name(),
-                phone=fake.phone_number().replace(" ", "")[:11],
+                phone=phone,
                 address=fake.address().replace("\n", ", "),
                 debt_amount=0.0,
                 created_at=datetime.now() - timedelta(days=random.randint(1, 90))
@@ -384,7 +402,7 @@ def main():
    • Đơn hàng:     {orders_count} đơn hàng
 
 🔐 ĐĂNG NHẬP:
-   • owner / 123456 → Nguyễn Văn A (Chủ cửa hàng)
+   • owner / 123456 → Lê Hà Quốc Huy (Chủ cửa hàng)
    • admin / 123456 → Lê Ngọc Châu (Quản trị hệ thống)
    • staff / 123456 → Huỳnh Xuân Huy (Nhân viên)
 

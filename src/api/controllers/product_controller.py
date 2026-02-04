@@ -1,3 +1,4 @@
+import traceback
 from flask import Blueprint, request, jsonify, g
 from src.api.middleware import token_required, owner_required
 from marshmallow import ValidationError
@@ -18,11 +19,6 @@ def create_product(product_service: ProductService):
     security:
       - Bearer: []
     parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token
       - in: body
         name: body
         required: true
@@ -53,11 +49,16 @@ def create_product(product_service: ProductService):
         description: Lỗi dữ liệu đầu vào
       403:
         description: Không có quyền truy cập (chỉ Owner)
+      500:
+        description: Lỗi server
     """
     try:
         # Validate input
         schema = ProductSchema()
-        data = schema.load(request.get_json())
+        try:
+            data = schema.load(request.get_json())
+        except ValidationError as e:
+            return jsonify({"error": e.messages}), 400
         
         # Check subscription limit
         from src.infrastructure.models.user_model import UserModel
@@ -67,11 +68,14 @@ def create_product(product_service: ProductService):
         user_id = request.current_user['user_id']
         user = UserModel.query.get(user_id)
         
+        if not user:
+             return jsonify({"error": "User not found"}), 404
+
         current_count = ProductModel.query.count()
         subscription_service = SubscriptionService()
         
         if not subscription_service.check_limit(user, 'products', current_count):
-            return jsonify({"error": "Đã đạt giới hạn số lượng sản phẩm của gói hiện tại (Basic: 50). Vui lòng nâng cấp!"}), 403
+            return jsonify({"error": "Đã đạt giới hạn số lượng sản phẩm của gói hiện tại. Vui lòng nâng cấp!"}), 403
 
         # Create product
         result = product_service.create_product(
@@ -86,8 +90,10 @@ def create_product(product_service: ProductService):
         else:
             return jsonify({"error": result['message']}), 400
             
-    except ValidationError as e:
-        return jsonify({"error": e.messages}), 400
+    except Exception as e:
+        print("ERROR in create_product:")
+        print(traceback.format_exc())
+        return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
 
 @product_bp.route('', methods=['GET'])
@@ -98,6 +104,8 @@ def get_products(product_service: ProductService):
     ---
     tags:
       - Product
+    security:
+      - Bearer: []
     parameters:
       - in: query
         name: page
@@ -141,18 +149,13 @@ def get_products(product_service: ProductService):
 @owner_required
 def import_stock(product_service: ProductService):
     """
-    Nhập hàng vào kho
+    Nhập hàng vào kho (Chỉ Owner)
     ---
     tags:
       - Product
     security:
       - Bearer: []
     parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Owner only)
       - in: body
         name: body
         required: true
@@ -240,18 +243,13 @@ def import_stock(product_service: ProductService):
 @owner_required
 def get_low_stock(product_service: ProductService):
     """
-    Lấy danh sách sản phẩm sắp hết hàng
+    Lấy danh sách sản phẩm sắp hết hàng (Chỉ Owner)
     ---
     tags:
       - Product
     security:
       - Bearer: []
     parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token
       - in: query
         name: threshold
         type: integer
