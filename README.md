@@ -92,6 +92,3 @@ Lệnh này sẽ khởi chạy MySQL (cổng 3306), Redis (cổng 6379) và phpM
 | **Chủ cửa hàng (Owner)** | `owner` | `123456` |
 | **Quản trị viên (Admin)** | `admin` | `123456` |
 | **Nhân viên (Staff)** | `staff` | `123456` |
-
----
-⭐ Nếu bạn thấy dự án này hay, hãy tặng cho mình 1 star nhé!
