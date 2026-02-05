@@ -17,7 +17,21 @@ interface Props {
 
 export function DraftOrderReview({ data, onCancel, onConfirm }: Props) {
     const [isConfirming, setIsConfirming] = useState(false);
-    const { draft_order, confidence, issues, warnings, transcript, draft_id } = data;
+
+    // Adapter for different API response formats
+    const draft_id = data.draft_id;
+    const transcript = data.transcript;
+    const confidence = data.confidence || 0.99; // Default high confidence if not provided
+    const issues = data.issues || [];
+    const warnings = data.warnings || [];
+
+    // Construct draft_order object from flat data if needed
+    const draft_order = data.draft_order || {
+        customer: data.customer,
+        items: data.items || [],
+        payment: { type: data.payment_method?.toLowerCase() || 'cash' },
+        total_amount: data.total_amount || 0
+    };
 
     const handleConfirm = async () => {
         setIsConfirming(true);

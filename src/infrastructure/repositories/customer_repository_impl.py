@@ -33,7 +33,7 @@ class CustomerRepositoryImpl(ICustomerRepository):
                 (CustomerModel.phone.like(search_pattern))
             )
         
-        customers = query.all()
+        customers = query.order_by(CustomerModel.id.desc()).all()
         return [self._model_to_entity(c) for c in customers]
     
     def find_by_id(self, customer_id: int) -> Optional[Customer]:

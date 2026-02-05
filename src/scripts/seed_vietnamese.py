@@ -117,6 +117,46 @@ CATEGORIES_DATA = {
     ],
 }
 
+VIETNAM_LOCATIONS = {
+    "cities": [
+        "TP. Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Hải Phòng",
+        "Bình Dương", "Đồng Nai", "Long An", "Tiền Giang"
+    ],
+    "districts": [
+        "Quận 1", "Quận 3", "Quận 5", "Quận 10", "Quận Bình Thạnh", "Quận Tân Bình",
+        "Thành phố Thủ Đức", "Huyện Bình Chánh", "Huyện Củ Chi", "Huyện Hóc Môn",
+        "Quận Gò Vấp", "Quận Phú Nhuận", "Quận 7", "Huyện Nhà Bè"
+    ],
+    "wards": [
+        "Phường Bến Nghé", "Phường Đa Kao", "Phường Tân Định",
+        "Phường 1", "Phường 2", "Phường 3", "Phường 4", "Phường 5",
+        "Xã Phong Phú", "Xã Bình Hưng", "Xã Tân Xuân", "Thị trấn Củ Chi"
+    ],
+    "streets": [
+        "Nguyễn Huệ", "Lê Lợi", "Pasteur", "Nam Kỳ Khởi Nghĩa",
+        "Điện Biên Phủ", "Cách Mạng Tháng 8", "Nguyễn Thị Minh Khai",
+        "Phạm Văn Đồng", "Võ Văn Kiệt", "Trường Chinh", "Cộng Hòa",
+        "Nguyễn Thái Sơn", "Phan Văn Trị", "Quang Trung", "Lê Văn Thọ"
+    ]
+}
+
+def generate_vietnamese_address() -> str:
+    """Generate a realistic Vietnamese address"""
+    street_num = str(random.randint(1, 999))
+    
+    # 30% chance of complex number (e.g. 12/5A)
+    if random.random() < 0.3:
+        street_num = f"{street_num}/{random.randint(1, 50)}"
+        if random.random() < 0.5:
+             street_num += random.choice(['A', 'B', 'H', ' Bis'])
+             
+    street = random.choice(VIETNAM_LOCATIONS["streets"])
+    ward = random.choice(VIETNAM_LOCATIONS["wards"])
+    district = random.choice(VIETNAM_LOCATIONS["districts"])
+    city = random.choice(VIETNAM_LOCATIONS["cities"])
+        
+    return f"{street_num} {street}, {ward}, {district}, {city}"
+
 
 def hash_password(password: str) -> str:
     """Hash password using bcrypt"""
@@ -254,7 +294,7 @@ def main():
             customer = CustomerModel(
                 name=fake.name(),
                 phone=phone,
-                address=fake.address().replace("\n", ", "),
+                address=generate_vietnamese_address(),
                 debt_amount=0.0,
                 created_at=datetime.now() - timedelta(days=random.randint(1, 90))
             )

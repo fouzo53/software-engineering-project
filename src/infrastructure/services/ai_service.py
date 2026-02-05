@@ -181,6 +181,7 @@ class AIService:
                 "customer": primary_data.get("customer"),
                 "payment_method": primary_draft.payment_method,
                 "total_amount": primary_draft.total_amount,
+                "confidence": parsed.get("confidence_score", 0.95),  # Get confidence from AI or default to 0.95
                 # New field for multiple drafts info
                 "multiple_drafts": len(created_drafts) > 1,
                 "all_drafts": [
@@ -286,10 +287,40 @@ class AIService:
                 })
                 total += product.price * quantity
             
+            # Xử lý khách hàng: Nếu chưa có ID nhưng có tên -> Tạo mới
+            final_customer_id = draft.customer_id
+            if not final_customer_id and draft.customer_name and draft.customer_name.lower() not in ['khách lẻ', 'khách vãng lai', 'guest']:
+                # Kiểm tra lại xem khách có trong DB chưa (tránh duplicate nếu vừa mới tạo)
+                existing_customer = CustomerModel.query.filter(
+                    CustomerModel.name.ilike(draft.customer_name)
+                ).first()
+                
+                if existing_customer:
+                    final_customer_id = existing_customer.id
+                else:
+                    # Tạo khách hàng mới với SĐT tạm
+                    import time
+                    import random
+                    # Generate unique dummy phone
+                    dummy_phone = f"UNK_{int(time.time())}_{random.randint(100,999)}"
+                    
+                    new_customer = CustomerModel(
+                        name=draft.customer_name,
+                        phone=dummy_phone,
+                        address="Địa chỉ từ đơn AI",
+                        created_at=datetime.utcnow()
+                    )
+                    db.session.add(new_customer)
+                    db.session.flush() # Lấy ID
+                    final_customer_id = new_customer.id
+                    
+                    # Update lại draft
+                    draft.customer_id = final_customer_id
+
             # Tạo Order
             new_order = OrderModel(
                 user_id=user_id,
-                customer_id=draft.customer_id,
+                customer_id=final_customer_id,
                 total_amount=total,
                 payment_method=draft.payment_method or 'CASH',
                 created_at=datetime.now()

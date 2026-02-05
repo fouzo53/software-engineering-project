@@ -60,7 +60,7 @@ source .venv/bin/activate  # Hoặc .venv\Scripts\activate trên Windows
 pip install -r requirements.txt
 
 # Tạo database MySQL (tên: bizflow_db) và chạy script nạp dữ liệu mẫu
-python seed_vietnamese.py
+python src/scripts/seed_vietnamese.py
 ```
 
 ### 4. Chạy ứng dụng
@@ -73,8 +73,8 @@ python run.py
 **Chạy Frontend (Cổng 3000):**
 ```bash
 cd frontend
-npm install
-npm run dev
+bun install
+bun dev
 ```
 
 ## 🐳 Chạy bằng Docker (Khuyên dùng)
