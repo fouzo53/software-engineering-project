@@ -16,7 +16,7 @@ import os
 import bcrypt
 
 # Thêm src vào Python path để đồng bộ với run.py
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 # Fix UTF-8 encoding on Windows
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
