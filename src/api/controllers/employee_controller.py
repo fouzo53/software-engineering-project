@@ -18,11 +18,7 @@ def create_employee(employee_service: EmployeeService):
     security:
       - Bearer: []
     parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Owner)
+
       - in: body
         name: body
         required: true
@@ -119,12 +115,7 @@ def get_all_employees(employee_service: EmployeeService):
       - Employee
     security:
       - Bearer: []
-    parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Owner)
+
     responses:
       200:
         description: Lấy danh sách nhân viên thành công
@@ -174,11 +165,7 @@ def update_employee_status(id: int, employee_service: EmployeeService):
     security:
       - Bearer: []
     parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Owner)
+
       - in: path
         name: id
         type: integer
@@ -241,11 +228,7 @@ def delete_employee(id: int, employee_service: EmployeeService):
     security:
       - Bearer: []
     parameters:
-      - in: header
-        name: Authorization
-        required: true
-        type: string
-        description: Bearer JWT token (Chỉ Owner)
+
       - in: path
         name: id
         type: integer
